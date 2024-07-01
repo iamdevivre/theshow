@@ -175,32 +175,62 @@ app.get('/api/db/items/:uuid', async (req, res) => {
 
     const uuid = req.params.uuid
 
-    if (uuid === '153cdc73ee95d7e2da41340d552d1370') {
+    if (uuid === '239a08b036996af21be91c28f8b985cb') {
+      //Rafael Devers
+      where = `
+        AND JSON_VALUE(DATA, '$.fielding_ability') <= 74
+        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE
+        AND JSON_VALUE(DATA, '$.set_name') = '2'`
+    } else if (uuid === '99cc0385e7170c6ee7a2cf202d3bbe42') {
+      //Nolan Arenado
+      where = `
+        AND JSON_VALUE(DATA, '$.speed') < 45
+        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE
+        AND JSON_VALUE(DATA, '$.set_name') = '2'`
+    } else if (uuid === '93fe5dc2e734e7754d0c7799bc091c7d') {
+      //Byron Buxton
+      where = `
+        AND JSON_VALUE(DATA, '$.plate_vision') < 60
+        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE
+        AND JSON_VALUE(DATA, '$.set_name') = '2'`
+    } else if (uuid === '153cdc73ee95d7e2da41340d552d1370') {
       //Giancarlo Stanton
       where = `
         AND JSON_VALUE(DATA, '$.series_year') BETWEEN 2010 AND 2019
         AND JSON_VALUE(DATA, '$.is_hitter') = TRUE
         AND JSON_VALUE(DATA, '$.set_name') = '2'`
-    } else if (uuid === '239a08b036996af21be91c28f8b985cb') {
-      //Rafael Devers
+    } else if (uuid === '8ef723b96a42952c7a4769a9231b79b3') {
+      //Corbin Carroll
       where = `
-        AND JSON_VALUE(DATA, '$.fielding_ability') <= 74
+        AND JSON_VALUE(DATA, '$.speed') > 84
         AND JSON_VALUE(DATA, '$.is_hitter') = TRUE
         AND JSON_VALUE(DATA, '$.set_name') = '2'`
     } else if (uuid === '5f6abd385d99e9f508320ab4cca07f28') {
       //Luis Castillo
       where = `
         AND JSON_VALUE(DATA, '$.series') = 'Live'`
-    } else if (uuid === '8ef723b96a42952c7a4769a9231b79b3') {
-      //Corbin Carroll
+    } else if (uuid === 'a03aad508e99fc341087a8b9ec12c053') {
+      //Kodai Senga
       where = `
-        AND JSON_VALUE(DATA, '$.speed') > 84
+        AND JSON_VALUE(DATA, '$.bb_per_bf') < 65
+        AND JSON_VALUE(DATA, '$.is_hitter') = FALSE
         AND JSON_VALUE(DATA, '$.set_name') = '2'`
-    } else if (uuid === '93fe5dc2e734e7754d0c7799bc091c7d') {
-      //Byron Buxton
+    } else if (uuid === 'e88a994b60847fd3f5bf29ddce531b13') {
+      //Greg Maddux
       where = `
-        AND JSON_VALUE(DATA, '$.plate_vision') < 60
+        AND (
+              (JSON_VALUE(DATA, '$.is_hitter') = 1 AND JSON_VALUE(DATA, '$.power_right') < 70)
+              OR
+              (JSON_VALUE(DATA, '$.is_hitter') = 0 AND JSON_VALUE(DATA, '$.k_per_bf') < 75)
+            )`
+    } else if (uuid === 'f91e35ca467d4be2e5b72fb20f9e2ca4') {
+      //David Ortiz
+      where = `
+        AND JSON_VALUE(DATA, '$.series_year') BETWEEN 2000 AND 2009
+        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE
         AND JSON_VALUE(DATA, '$.set_name') = '2'`
+    } else {
+      where = ``
     }
 
     //포지션

@@ -33,6 +33,7 @@
               name="btnradio"
               :id="`btnradio${index}`"
               autocomplete="off"
+              :checked="index === 0 ? true : false"
             />
             <label
               :class="`btn btn-outline-${index > 7 ? 'danger' : 'primary'}`"
@@ -137,7 +138,7 @@ const inquiryCaptains = async (mode, ability) => {
 
   //능력치 조건
   if (!ability) {
-    ability = ''
+    ability = 'Cornerstone'
   }
 
   //타이틀

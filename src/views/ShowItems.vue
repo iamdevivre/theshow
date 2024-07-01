@@ -521,6 +521,7 @@ import { onMounted, reactive, ref } from 'vue'
 
 //검색 파라미터
 let { searchParams } = history.state
+let uuid = searchParams ? searchParams.uuid : '239a08b036996af21be91c28f8b985cb'
 
 //페이지
 let page = 0
@@ -533,16 +534,29 @@ let more = ref(false)
 
 //캡틴
 let captain = ref(null)
-if (searchParams.uuid === '153cdc73ee95d7e2da41340d552d1370') {
-  captain.value = 'Giancarlo Stanton'
-} else if (searchParams.uuid === '239a08b036996af21be91c28f8b985cb') {
+
+if (!searchParams) {
   captain.value = 'Rafael Devers'
-} else if (searchParams.uuid === '5f6abd385d99e9f508320ab4cca07f28') {
-  captain.value = 'Luis Castillo'
-} else if (searchParams.uuid === '8ef723b96a42952c7a4769a9231b79b3') {
-  captain.value = 'Corbin Carroll'
-} else if (searchParams.uuid === '93fe5dc2e734e7754d0c7799bc091c7d') {
-  captain.value = 'Byron Buxton'
+} else {
+  if (searchParams.uuid === '239a08b036996af21be91c28f8b985cb') {
+    captain.value = 'Rafael Devers'
+  } else if (searchParams.uuid === '99cc0385e7170c6ee7a2cf202d3bbe42') {
+    captain.value = 'Nolan Arenado'
+  } else if (searchParams.uuid === '93fe5dc2e734e7754d0c7799bc091c7d') {
+    captain.value = 'Byron Buxton'
+  } else if (searchParams.uuid === '153cdc73ee95d7e2da41340d552d1370') {
+    captain.value = 'Giancarlo Stanton'
+  } else if (searchParams.uuid === '8ef723b96a42952c7a4769a9231b79b3') {
+    captain.value = 'Corbin Carroll'
+  } else if (searchParams.uuid === '5f6abd385d99e9f508320ab4cca07f28') {
+    captain.value = 'Luis Castillo'
+  } else if (searchParams.uuid === 'a03aad508e99fc341087a8b9ec12c053') {
+    captain.value = 'Kodai Senga'
+  } else if (searchParams.uuid === 'e88a994b60847fd3f5bf29ddce531b13') {
+    captain.value = 'Greg Maddux'
+  } else if (searchParams.uuid === 'f91e35ca467d4be2e5b72fb20f9e2ca4') {
+    captain.value = 'David Ortiz'
+  }
 }
 
 //포지션 필터
@@ -556,22 +570,7 @@ const calcBoost = (type, value) => {
   let result = value
   let boost
 
-  if (captain.value === 'Giancarlo Stanton') {
-    switch (type) {
-      case 'POW R':
-        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
-        result = `${value}⇢${boost}`
-        break
-      case 'POW L':
-        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
-        result = `${value}⇢${boost}`
-        break
-      case 'CLT':
-        boost = value * 1 + 10 > 125 ? 125 : value * 1 + 10
-        result = `${value}⇢${boost}`
-        break
-    }
-  } else if (captain.value === 'Rafael Devers') {
+  if (captain.value === 'Rafael Devers') {
     switch (type) {
       case 'POW R':
         boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
@@ -587,6 +586,40 @@ const calcBoost = (type, value) => {
         break
       case 'CLT':
         boost = value * 1 + 5 > 125 ? 125 : value * 1 + 5
+        result = `${value}⇢${boost}`
+        break
+    }
+  } else if (captain.value === 'Nolan Arenado') {
+    switch (type) {
+      case 'CON R':
+        boost = value * 1 + 20 > 125 ? 125 : value * 1 + 20
+        result = `${value}⇢${boost}`
+        break
+      case 'POW L':
+        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
+        result = `${value}⇢${boost}`
+        break
+      case 'CLT':
+        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
+        result = `${value}⇢${boost}`
+        break
+      case 'FLD':
+        boost = value * 1 + 10 > 125 ? 125 : value * 1 + 10
+        result = `${value}⇢${boost}`
+        break
+    }
+  } else if (captain.value === 'Giancarlo Stanton') {
+    switch (type) {
+      case 'POW R':
+        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
+        result = `${value}⇢${boost}`
+        break
+      case 'POW L':
+        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
+        result = `${value}⇢${boost}`
+        break
+      case 'CLT':
+        boost = value * 1 + 10 > 125 ? 125 : value * 1 + 10
         result = `${value}⇢${boost}`
         break
     }
@@ -665,7 +698,7 @@ const inquiryItems = async (mode, position) => {
   }
 
   //API 호출
-  const res = await fetch(`/api/db/items/${searchParams.uuid}?page=${page}&pos=${position}`)
+  const res = await fetch(`/api/db/items/${uuid}?page=${page}&pos=${position}`)
   //응답
   const result = await res.json()
 

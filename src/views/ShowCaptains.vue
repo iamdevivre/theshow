@@ -24,23 +24,70 @@
       </div>
 
       <div class="d-grid gap-2 d-md-block py-5">
-        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-          <template v-for="(ability, index) in abilities" :key="ability">
-            <input
-              @click="inquiryCaptains('I', `${ability}`)"
-              type="radio"
-              class="btn-check"
-              name="btnradio"
-              :id="`btnradio${index}`"
-              autocomplete="off"
-              :checked="index === 0 ? true : false"
-            />
-            <label
-              :class="`btn btn-outline-${index > 7 ? 'danger' : 'primary'}`"
-              :for="`btnradio${index}`"
-              >{{ ability }}</label
+        <div class="row">
+          <div class="col-3">
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+              <template v-for="(ability, index) in abilities" :key="ability">
+                <input
+                  @click="inquiryCaptains('I', `${ability}`)"
+                  type="radio"
+                  class="btn-check"
+                  name="ability"
+                  :id="`ability${index}`"
+                  autocomplete="off"
+                  :checked="index === 0 ? true : false"
+                />
+                <label class="btn btn-outline-primary" :for="`ability${index}`">{{
+                  ability
+                }}</label>
+              </template>
+            </div>
+          </div>
+
+          <div class="col-3">
+            <select
+              @change="inquiryTeams($event)"
+              class="form-select"
+              aria-label="Default select example"
             >
-          </template>
+              <option value="">--- 아메리칸 리그🥨동부지구 ---</option>
+              <option value="Orioles">Orioles</option>
+              <option value="Red Sox">Red Sox</option>
+              <option value="Yankees">Yankees</option>
+              <option value="Rays">Rays</option>
+              <option value="Blue Jays">Blue Jays</option>
+              <option value="">--- 아메리칸 리그🥨중부지구 ---</option>
+              <option value="Sox">White Sox</option>
+              <option value="Guardians">Guardians</option>
+              <option value="Tigers">Tigers</option>
+              <option value="Royals">Royals</option>
+              <option value="Twins">Twins</option>
+              <option value="">--- 아메리칸 리그🥨서부지구 ---</option>
+              <option value="Astros">Astros</option>
+              <option value="Angels">Angels</option>
+              <option value="Athletics">Athletics</option>
+              <option value="Mariners">Mariners</option>
+              <option value="Rangers">Rangers</option>
+              <option value="">--- 내셔널 리그🥨동부지구 ---</option>
+              <option value="Braves">Braves</option>
+              <option value="Marlins">Marlins</option>
+              <option value="Mets">Mets</option>
+              <option value="Phillies">Phillies</option>
+              <option value="Nationals">Nationals</option>
+              <option value="">--- 내셔널 리그🥨중부지구 ---</option>
+              <option value="Cubs">Cubs</option>
+              <option value="Reds">Reds</option>
+              <option value="Brewers">Brewers</option>
+              <option value="Pirates">Pirates</option>
+              <option value="Cardinals">Cardinals</option>
+              <option value="">--- 내셔널 리그🥨서부지구 ---</option>
+              <option value="Diamondbacks">Diamondbacks</option>
+              <option value="Rockies">Rockies</option>
+              <option value="Dodgers">Dodgers</option>
+              <option value="Padres">Padres</option>
+              <option value="Giants">Giants</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -124,10 +171,24 @@ const captains = reactive([])
 //능력 필터
 const abilities = ref(['Cornerstone', 'Team Captain', 'Other'])
 
+//선택된 능력 필터
+let selectedAbilities = 'Cornerstone'
+
+/**
+ * 팀 조건 조회
+ */
+const inquiryTeams = (event) => {
+  let teams = event.target.value
+
+  if (teams) {
+    inquiryCaptains('I', null, teams)
+  }
+}
+
 /**
  * 캡틴 목록 조회
  */
-const inquiryCaptains = async (mode, ability) => {
+const inquiryCaptains = async (mode, ability, team) => {
   //페이지 증가
   if (mode === 'I') {
     captains.splice(0)
@@ -137,15 +198,17 @@ const inquiryCaptains = async (mode, ability) => {
   }
 
   //능력치 조건
-  if (!ability) {
-    ability = 'Cornerstone'
+  if (mode === 'I') {
+    if (ability) {
+      selectedAbilities = ability
+    }
   }
 
   //타이틀
   title.value = ability ? ability : '전체'
 
   //API 호출
-  const res = await fetch(`/api/db/captains?page=${page}&ability=${ability}`)
+  const res = await fetch(`/api/db/captains?page=${page}&ability=${selectedAbilities}&team=${team}`)
   //응답
   const result = await res.json()
 
@@ -164,7 +227,7 @@ const inquiryCaptains = async (mode, ability) => {
  * 컴포넌트 마운트
  */
 onMounted(async () => {
-  inquiryCaptains()
+  inquiryCaptains('I')
 })
 </script>
 

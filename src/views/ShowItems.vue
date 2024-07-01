@@ -19,7 +19,7 @@
       <div>
         <h1 class="font-bold text-transparent tracking-tight max-w-2xl text-7xl">
           <span class="inline-block bg-clip-text bg-gradient-to-r from-green-600 to-blue-600"
-            >MLB 더 쇼 24<br />`{{ captain }}` 총 {{ total }} 선수</span
+            >MLB 더 쇼 24<br />`{{ selectedCaptain.name }}` 총 {{ total }} 선수</span
           >
         </h1>
       </div>
@@ -54,7 +54,8 @@
                 :alt="item.$.name"
                 style="width: 150px"
               />
-              <span class="fs-3">#{{ index + 1 }}</span>
+              <div class="fs-3">#{{ index + 1 }}</div>
+              <div class="fs-3">Set {{ item.$.set_name }}</div>
             </div>
             <div class="col fs-5 fw-bold">
               <!-- STR: 선수 이름 -->
@@ -533,31 +534,21 @@ let total = ref(0)
 let more = ref(false)
 
 //캡틴
-let captain = ref(null)
+let captains = ref([
+  { name: 'Rafael Devers', uuid: '239a08b036996af21be91c28f8b985cb' },
+  { name: 'Nolan Arenado', uuid: '99cc0385e7170c6ee7a2cf202d3bbe42' },
+  { name: 'Byron Buxton', uuid: '93fe5dc2e734e7754d0c7799bc091c7d' },
+  { name: 'Giancarlo Stanton', uuid: '153cdc73ee95d7e2da41340d552d1370' },
+  { name: 'Corbin Carroll', uuid: '8ef723b96a42952c7a4769a9231b79b3' },
+  { name: 'Luis Castillo', uuid: '5f6abd385d99e9f508320ab4cca07f28' },
+  { name: 'Kodai Senga', uuid: 'a03aad508e99fc341087a8b9ec12c053' },
+  { name: 'Greg Maddux', uuid: 'e88a994b60847fd3f5bf29ddce531b13' },
+  { name: 'David Ortiz', uuid: 'f91e35ca467d4be2e5b72fb20f9e2ca4' },
+  { name: 'Frank Thomas', uuid: '23aa022e22662426f9a3c97187ef0649' }
+])
 
-if (!searchParams) {
-  captain.value = 'Rafael Devers'
-} else {
-  if (searchParams.uuid === '239a08b036996af21be91c28f8b985cb') {
-    captain.value = 'Rafael Devers'
-  } else if (searchParams.uuid === '99cc0385e7170c6ee7a2cf202d3bbe42') {
-    captain.value = 'Nolan Arenado'
-  } else if (searchParams.uuid === '93fe5dc2e734e7754d0c7799bc091c7d') {
-    captain.value = 'Byron Buxton'
-  } else if (searchParams.uuid === '153cdc73ee95d7e2da41340d552d1370') {
-    captain.value = 'Giancarlo Stanton'
-  } else if (searchParams.uuid === '8ef723b96a42952c7a4769a9231b79b3') {
-    captain.value = 'Corbin Carroll'
-  } else if (searchParams.uuid === '5f6abd385d99e9f508320ab4cca07f28') {
-    captain.value = 'Luis Castillo'
-  } else if (searchParams.uuid === 'a03aad508e99fc341087a8b9ec12c053') {
-    captain.value = 'Kodai Senga'
-  } else if (searchParams.uuid === 'e88a994b60847fd3f5bf29ddce531b13') {
-    captain.value = 'Greg Maddux'
-  } else if (searchParams.uuid === 'f91e35ca467d4be2e5b72fb20f9e2ca4') {
-    captain.value = 'David Ortiz'
-  }
-}
+//선택된 캡틴
+const selectedCaptain = captains.value.filter((ele) => ele.uuid === uuid)[0]
 
 //포지션 필터
 const positions = ['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'SP', 'RP', 'CP']
@@ -570,7 +561,7 @@ const calcBoost = (type, value) => {
   let result = value
   let boost
 
-  if (captain.value === 'Rafael Devers') {
+  if (selectedCaptain.name === 'Rafael Devers') {
     switch (type) {
       case 'POW R':
         boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
@@ -589,7 +580,7 @@ const calcBoost = (type, value) => {
         result = `${value}⇢${boost}`
         break
     }
-  } else if (captain.value === 'Nolan Arenado') {
+  } else if (selectedCaptain.name === 'Nolan Arenado') {
     switch (type) {
       case 'CON R':
         boost = value * 1 + 20 > 125 ? 125 : value * 1 + 20
@@ -608,7 +599,7 @@ const calcBoost = (type, value) => {
         result = `${value}⇢${boost}`
         break
     }
-  } else if (captain.value === 'Giancarlo Stanton') {
+  } else if (selectedCaptain.name === 'Giancarlo Stanton') {
     switch (type) {
       case 'POW R':
         boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
@@ -623,7 +614,7 @@ const calcBoost = (type, value) => {
         result = `${value}⇢${boost}`
         break
     }
-  } else if (captain.value === 'Luis Castillo') {
+  } else if (selectedCaptain.name === 'Luis Castillo') {
     switch (type) {
       case 'CON R':
         boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
@@ -642,7 +633,7 @@ const calcBoost = (type, value) => {
         result = `${value}⇢${boost}`
         break
     }
-  } else if (captain.value === 'Corbin Carroll') {
+  } else if (selectedCaptain.name === 'Corbin Carroll') {
     switch (type) {
       case 'CON R':
         boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
@@ -661,7 +652,7 @@ const calcBoost = (type, value) => {
         result = `${value}⇢${boost}`
         break
     }
-  } else if (captain.value === 'Byron Buxton') {
+  } else if (selectedCaptain.name === 'Byron Buxton') {
     switch (type) {
       case 'POW R':
         boost = value * 1 + 12 > 125 ? 125 : value * 1 + 12
@@ -677,6 +668,25 @@ const calcBoost = (type, value) => {
         break
       case 'FLD':
         boost = value * 1 + 5 > 125 ? 125 : value * 1 + 5
+        result = `${value}⇢${boost}`
+        break
+    }
+  } else if (selectedCaptain.name === 'Frank Thomas') {
+    switch (type) {
+      case 'POW R':
+        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
+        result = `${value}⇢${boost}`
+        break
+      case 'POW L':
+        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
+        result = `${value}⇢${boost}`
+        break
+      case 'PCLT':
+        boost = value * 1 + 10 > 125 ? 125 : value * 1 + 10
+        result = `${value}⇢${boost}`
+        break
+      case 'K/9':
+        boost = value * 1 + 10 > 125 ? 125 : value * 1 + 10
         result = `${value}⇢${boost}`
         break
     }

@@ -113,6 +113,7 @@ app.get('/api/db/captains', async (req, res) => {
 
   const page = req.query.page
   const ability = req.query.ability
+  const team = req.query.team
 
   try {
     conn = await pool.getConnection()
@@ -132,6 +133,15 @@ app.get('/api/db/captains', async (req, res) => {
         AND JSON_VALUE(DATA, '$.ability_name') Not Like '%Team Captain%'`
     } else {
       where = ``
+    }
+
+    //팀
+    if (team != 'undefined') {
+      where =
+        where +
+        `
+        AND JSON_VALUE(DATA, '$.team') = '${team}'
+      `
     }
 
     rows = await conn.query({
@@ -229,6 +239,10 @@ app.get('/api/db/items/:uuid', async (req, res) => {
         AND JSON_VALUE(DATA, '$.series_year') BETWEEN 2000 AND 2009
         AND JSON_VALUE(DATA, '$.is_hitter') = TRUE
         AND JSON_VALUE(DATA, '$.set_name') = '2'`
+    } else if (uuid === '23aa022e22662426f9a3c97187ef0649') {
+      //Frank Thomas
+      where = `
+        AND JSON_VALUE(DATA, '$.team_short_name') = 'OAK'`
     } else {
       where = ``
     }
@@ -351,6 +365,23 @@ app.get('/api/items', async (req, res) => {
       data = await call(url)
       await insertItems(data.items)
     }
+  } catch (err) {
+    console.error(err)
+  }
+
+  res.send(data)
+})
+
+/**
+ * API: 게임 이력 조회
+ */
+app.get('/api/history', async (req, res) => {
+  let data = null
+  let page = req.query.page
+
+  try {
+    const url = `https://mlb24.theshow.com/apis/game_history.json?username=ProgFreeXer&platform=xbl&mode=arena&page=${page}`
+    data = await call(url)
   } catch (err) {
     console.error(err)
   }

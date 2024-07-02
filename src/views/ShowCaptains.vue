@@ -25,7 +25,7 @@
 
       <div class="d-grid gap-2 d-md-block py-5">
         <div class="row">
-          <div class="col-3">
+          <div class="col-md-auto">
             <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
               <template v-for="(ability, index) in abilities" :key="ability">
                 <input
@@ -44,7 +44,7 @@
             </div>
           </div>
 
-          <div class="col-3">
+          <div class="col-md-auto">
             <select
               @change="inquiryTeams($event)"
               class="form-select"
@@ -110,10 +110,21 @@
           <template v-for="(captain, index) in captains" :key="captain.$.uuid">
             <tr class="align-top">
               <td scope="row">{{ index + 1 }}</td>
-              <td><img :src="captain.$.img" :alt="captain.$.name" style="width: 50px" /></td>
+              <td>
+                <img :src="captain.$.img" :alt="captain.$.name" class="pb-1" style="width: 55px" />
+              </td>
               <td>
                 <RouterLink
-                  :to="{ name: 'Items', state: { searchParams: { uuid: captain.$.uuid } } }"
+                  :to="{
+                    name: 'Items',
+                    state: {
+                      searchParams: {
+                        uuid: captain.$.uuid,
+                        name: captain.$.name,
+                        boosts: JSON.stringify(captain.$.boosts)
+                      }
+                    }
+                  }"
                   >{{ captain.$.name }}</RouterLink
                 >
               </td>

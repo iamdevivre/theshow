@@ -239,8 +239,11 @@ app.get('/api/db/items/:uuid', async (req, res) => {
         AND JSON_VALUE(DATA, '$.series_year') BETWEEN 2000 AND 2009
         AND JSON_VALUE(DATA, '$.is_hitter') = TRUE
         AND JSON_VALUE(DATA, '$.set_name') = '2'`
-    } else if (uuid === '23aa022e22662426f9a3c97187ef0649') {
-      //Frank Thomas
+    } else if (
+      uuid === '23aa022e22662426f9a3c97187ef0649' ||
+      uuid === 'bc224f0b34a3a0f7c0b9042fc31eae18'
+    ) {
+      //Frank Thomas, Sean Manaea
       where = `
         AND JSON_VALUE(DATA, '$.team_short_name') = 'OAK'`
     } else {

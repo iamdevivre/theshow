@@ -19,7 +19,7 @@
       <div>
         <h1 class="font-bold text-transparent tracking-tight max-w-2xl text-7xl">
           <span class="inline-block bg-clip-text bg-gradient-to-r from-green-600 to-blue-600"
-            >MLB 더 쇼 24<br />`{{ selectedCaptain.name }}` 총 {{ total }} 선수</span
+            >MLB 더 쇼 24<br />`{{ name }}` 총 {{ total }} 선수</span
           >
         </h1>
       </div>
@@ -42,6 +42,14 @@
             >
           </template>
         </div>
+      </div>
+
+      <div class="d-grid gap-2 d-md-block p-5 bg-success rounded-3 text-white">
+        <p class="fs-3">{{ boosts[2].description }}</p>
+        <template v-for="attribute in attributes" :key="attribute.name">
+          <span class="fs-4 fw-bold pe-3">{{ attribute.name }}</span>
+          <span class="fs-4 pe-5">{{ attribute.value }}💨</span>
+        </template>
       </div>
 
       <div class="d-grid gap-2 d-md-block py-5">
@@ -164,7 +172,7 @@
                         >
                           <button type="button" class="btn btn-primary fs-8">CON R</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('CON R', item.$.contact_right) }}
+                            {{ calcBoost('Contact vs R', item.$.contact_right) }}
                           </button>
                         </div>
                         <div
@@ -174,7 +182,7 @@
                         >
                           <button type="button" class="btn btn-primary fs-8">CON L</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('CON L', item.$.contact_left) }}
+                            {{ calcBoost('Contact vs L', item.$.contact_left) }}
                           </button>
                         </div>
                         <div
@@ -184,7 +192,7 @@
                         >
                           <button type="button" class="btn btn-primary fs-8">POW R</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('POW R', item.$.power_right) }}
+                            {{ calcBoost('Power vs R', item.$.power_right) }}
                           </button>
                         </div>
                         <div
@@ -194,7 +202,7 @@
                         >
                           <button type="button" class="btn btn-primary fs-8">POW L</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('POW L', item.$.power_left) }}
+                            {{ calcBoost('Power vs L', item.$.power_left) }}
                           </button>
                         </div>
                         <div
@@ -204,7 +212,7 @@
                         >
                           <button type="button" class="btn btn-primary fs-8">VIS</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('VIS', item.$.plate_vision) }}
+                            {{ calcBoost('Plate Vision', item.$.plate_vision) }}
                           </button>
                         </div>
                         <div
@@ -214,7 +222,7 @@
                         >
                           <button type="button" class="btn btn-primary fs-8">CLT</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('CLT', item.$.batting_clutch) }}
+                            {{ calcBoost('Batting Clutch', item.$.batting_clutch) }}
                           </button>
                         </div>
                       </div>
@@ -232,7 +240,7 @@
                         >
                           <button type="button" class="btn btn-danger fs-8">STA</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('STA', item.$.stamina) }}
+                            {{ calcBoost('Stamina', item.$.stamina) }}
                           </button>
                         </div>
                         <div
@@ -242,7 +250,7 @@
                         >
                           <button type="button" class="btn btn-danger fs-8">H/9</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('H/9', item.$.hits_per_bf) }}
+                            {{ calcBoost('Hits Per 9', item.$.hits_per_bf) }}
                           </button>
                         </div>
                         <div
@@ -252,7 +260,7 @@
                         >
                           <button type="button" class="btn btn-danger fs-8">K/9</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('K/9', item.$.k_per_bf) }}
+                            {{ calcBoost('K Per 9', item.$.k_per_bf) }}
                           </button>
                         </div>
                         <div
@@ -262,7 +270,7 @@
                         >
                           <button type="button" class="btn btn-danger fs-8">BB/9</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('BB/9', item.$.bb_per_bf) }}
+                            {{ calcBoost('BB Per 9', item.$.bb_per_bf) }}
                           </button>
                         </div>
                         <div
@@ -272,7 +280,7 @@
                         >
                           <button type="button" class="btn btn-danger fs-8">HR/9</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('HR/9', item.$.hr_per_bf) }}
+                            {{ calcBoost('HR Per 9', item.$.hr_per_bf) }}
                           </button>
                         </div>
                         <div
@@ -282,7 +290,7 @@
                         >
                           <button type="button" class="btn btn-danger fs-8">PCLT</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('PCLT', item.$.pitching_clutch) }}
+                            {{ calcBoost('Pitching Clutch', item.$.pitching_clutch) }}
                           </button>
                         </div>
                         <div
@@ -292,7 +300,7 @@
                         >
                           <button type="button" class="btn btn-danger fs-8">CTRL</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('CTRL', item.$.pitch_control) }}
+                            {{ calcBoost('Pitching Control', item.$.pitch_control) }}
                           </button>
                         </div>
                         <div
@@ -302,7 +310,7 @@
                         >
                           <button type="button" class="btn btn-danger fs-8">VEL</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('VEL', item.$.pitch_velocity) }}
+                            {{ calcBoost('Pitching Velocity', item.$.pitch_velocity) }}
                           </button>
                         </div>
                         <div
@@ -312,7 +320,7 @@
                         >
                           <button type="button" class="btn btn-danger fs-8">BRK</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('BRK', item.$.pitch_movement) }}
+                            {{ calcBoost('Pitching Movement', item.$.pitch_movement) }}
                           </button>
                         </div>
                       </div>
@@ -330,7 +338,7 @@
                         >
                           <button type="button" class="btn btn-success fs-8">FLD</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('FLD', item.$.fielding_ability) }}
+                            {{ calcBoost('Fielding Ability', item.$.fielding_ability) }}
                           </button>
                         </div>
                         <div
@@ -340,7 +348,7 @@
                         >
                           <button type="button" class="btn btn-success fs-8">ARM</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('ARM', item.$.arm_strength) }}
+                            {{ calcBoost('Arm Strength', item.$.arm_strength) }}
                           </button>
                         </div>
                         <div
@@ -350,7 +358,7 @@
                         >
                           <button type="button" class="btn btn-success fs-8">ACC</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('ACC', item.$.arm_accuracy) }}
+                            {{ calcBoost('Arm Accuracy', item.$.arm_accuracy) }}
                           </button>
                         </div>
                         <div
@@ -360,7 +368,7 @@
                         >
                           <button type="button" class="btn btn-success fs-8">REAC</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('REAC', item.$.reaction_time) }}
+                            {{ calcBoost('Reaction Time', item.$.reaction_time) }}
                           </button>
                         </div>
                       </div>
@@ -378,7 +386,7 @@
                         >
                           <button type="button" class="btn btn-warning fs-8">SPD</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('SPD', item.$.speed) }}
+                            {{ calcBoost('Speed', item.$.speed) }}
                           </button>
                         </div>
                         <div
@@ -388,7 +396,7 @@
                         >
                           <button type="button" class="btn btn-warning fs-8">STEAL</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('STEAL', item.$.baserunning_ability) }}
+                            {{ calcBoost('Baserunning Ability', item.$.baserunning_ability) }}
                           </button>
                         </div>
                         <div
@@ -398,7 +406,7 @@
                         >
                           <button type="button" class="btn btn-warning fs-8">BR AGG</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
-                            {{ calcBoost('BR AGG', item.$.baserunning_aggression) }}
+                            {{ calcBoost('Baserunning Aggression', item.$.baserunning_aggression) }}
                           </button>
                         </div>
                       </div>
@@ -523,6 +531,40 @@ import { onMounted, reactive, ref } from 'vue'
 //검색 파라미터
 let { searchParams } = history.state
 let uuid = searchParams ? searchParams.uuid : '239a08b036996af21be91c28f8b985cb'
+let name = searchParams ? searchParams.name : 'Rafael Devers'
+let boosts = searchParams
+  ? JSON.parse(searchParams.boosts)
+  : [
+      {
+        tier: '1',
+        description: '5 Hitters with under 75 Fielding on your squad',
+        attributes: [
+          { name: 'Power vs R', value: '5' },
+          { name: 'Power vs L', value: '5' }
+        ]
+      },
+      {
+        tier: '2',
+        description: '8 Hitters with under 75 Fielding on your squad',
+        attributes: [
+          { name: 'Power vs R', value: '10' },
+          { name: 'Power vs L', value: '10' }
+        ]
+      },
+      {
+        tier: '3',
+        description: '11 Hitters with under 75 Fielding on your squad',
+        attributes: [
+          { name: 'Power vs R', value: '15' },
+          { name: 'Power vs L', value: '15' },
+          { name: 'Plate Vision', value: '5' },
+          { name: 'Batting Clutch', value: '5' }
+        ]
+      }
+    ]
+
+//능력치(3티어)
+const attributes = boosts[2].attributes
 
 //페이지
 let page = 0
@@ -532,23 +574,6 @@ let total = ref(0)
 
 //더보기
 let more = ref(false)
-
-//캡틴
-let captains = ref([
-  { name: 'Rafael Devers', uuid: '239a08b036996af21be91c28f8b985cb' },
-  { name: 'Nolan Arenado', uuid: '99cc0385e7170c6ee7a2cf202d3bbe42' },
-  { name: 'Byron Buxton', uuid: '93fe5dc2e734e7754d0c7799bc091c7d' },
-  { name: 'Giancarlo Stanton', uuid: '153cdc73ee95d7e2da41340d552d1370' },
-  { name: 'Corbin Carroll', uuid: '8ef723b96a42952c7a4769a9231b79b3' },
-  { name: 'Luis Castillo', uuid: '5f6abd385d99e9f508320ab4cca07f28' },
-  { name: 'Kodai Senga', uuid: 'a03aad508e99fc341087a8b9ec12c053' },
-  { name: 'Greg Maddux', uuid: 'e88a994b60847fd3f5bf29ddce531b13' },
-  { name: 'David Ortiz', uuid: 'f91e35ca467d4be2e5b72fb20f9e2ca4' },
-  { name: 'Frank Thomas', uuid: '23aa022e22662426f9a3c97187ef0649' }
-])
-
-//선택된 캡틴
-const selectedCaptain = captains.value.filter((ele) => ele.uuid === uuid)[0]
 
 //포지션 필터
 const positions = ['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'SP', 'RP', 'CP']
@@ -561,136 +586,13 @@ const calcBoost = (type, value) => {
   let result = value
   let boost
 
-  if (selectedCaptain.name === 'Rafael Devers') {
-    switch (type) {
-      case 'POW R':
-        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
-        result = `${value}⇢${boost}`
-        break
-      case 'POW L':
-        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
-        result = `${value}⇢${boost}`
-        break
-      case 'VIS':
-        boost = value * 1 + 5 > 125 ? 125 : value * 1 + 5
-        result = `${value}⇢${boost}`
-        break
-      case 'CLT':
-        boost = value * 1 + 5 > 125 ? 125 : value * 1 + 5
-        result = `${value}⇢${boost}`
-        break
+  attributes.forEach((element) => {
+    if (element.name === type) {
+      boost = Number(value) + Number(element.value)
+      boost = boost > 125 ? 125 : boost
+      result = `${value}⇢${boost}`
     }
-  } else if (selectedCaptain.name === 'Nolan Arenado') {
-    switch (type) {
-      case 'CON R':
-        boost = value * 1 + 20 > 125 ? 125 : value * 1 + 20
-        result = `${value}⇢${boost}`
-        break
-      case 'POW L':
-        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
-        result = `${value}⇢${boost}`
-        break
-      case 'CLT':
-        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
-        result = `${value}⇢${boost}`
-        break
-      case 'FLD':
-        boost = value * 1 + 10 > 125 ? 125 : value * 1 + 10
-        result = `${value}⇢${boost}`
-        break
-    }
-  } else if (selectedCaptain.name === 'Giancarlo Stanton') {
-    switch (type) {
-      case 'POW R':
-        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
-        result = `${value}⇢${boost}`
-        break
-      case 'POW L':
-        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
-        result = `${value}⇢${boost}`
-        break
-      case 'CLT':
-        boost = value * 1 + 10 > 125 ? 125 : value * 1 + 10
-        result = `${value}⇢${boost}`
-        break
-    }
-  } else if (selectedCaptain.name === 'Luis Castillo') {
-    switch (type) {
-      case 'CON R':
-        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
-        result = `${value}⇢${boost}`
-        break
-      case 'CON L':
-        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
-        result = `${value}⇢${boost}`
-        break
-      case 'H/9':
-        boost = value * 1 + 5 > 125 ? 125 : value * 1 + 5
-        result = `${value}⇢${boost}`
-        break
-      case 'BB/9':
-        boost = value * 1 + 5 > 125 ? 125 : value * 1 + 5
-        result = `${value}⇢${boost}`
-        break
-    }
-  } else if (selectedCaptain.name === 'Corbin Carroll') {
-    switch (type) {
-      case 'CON R':
-        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
-        result = `${value}⇢${boost}`
-        break
-      case 'CON L':
-        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
-        result = `${value}⇢${boost}`
-        break
-      case 'VIS':
-        boost = value * 1 + 5 > 125 ? 125 : value * 1 + 5
-        result = `${value}⇢${boost}`
-        break
-      case 'REAC':
-        boost = value * 1 + 5 > 125 ? 125 : value * 1 + 5
-        result = `${value}⇢${boost}`
-        break
-    }
-  } else if (selectedCaptain.name === 'Byron Buxton') {
-    switch (type) {
-      case 'POW R':
-        boost = value * 1 + 12 > 125 ? 125 : value * 1 + 12
-        result = `${value}⇢${boost}`
-        break
-      case 'POW L':
-        boost = value * 1 + 10 > 125 ? 125 : value * 1 + 10
-        result = `${value}⇢${boost}`
-        break
-      case 'SPD':
-        boost = value * 1 + 3 > 125 ? 125 : value * 1 + 3
-        result = `${value}⇢${boost}`
-        break
-      case 'FLD':
-        boost = value * 1 + 5 > 125 ? 125 : value * 1 + 5
-        result = `${value}⇢${boost}`
-        break
-    }
-  } else if (selectedCaptain.name === 'Frank Thomas') {
-    switch (type) {
-      case 'POW R':
-        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
-        result = `${value}⇢${boost}`
-        break
-      case 'POW L':
-        boost = value * 1 + 15 > 125 ? 125 : value * 1 + 15
-        result = `${value}⇢${boost}`
-        break
-      case 'PCLT':
-        boost = value * 1 + 10 > 125 ? 125 : value * 1 + 10
-        result = `${value}⇢${boost}`
-        break
-      case 'K/9':
-        boost = value * 1 + 10 > 125 ? 125 : value * 1 + 10
-        result = `${value}⇢${boost}`
-        break
-    }
-  }
+  })
 
   return result
 }

@@ -3,14 +3,10 @@
     <div class="container">
       <header class="pb-5">
         <nav class="nav nav-pills flex-column flex-sm-row">
-          <RouterLink
-            :to="{ name: 'Captains' }"
-            class="flex-sm-fill text-sm-center nav-link fs-5 fw-bold"
+          <RouterLink :to="{ name: 'Captains' }" class="flex-sm-fill text-sm-center nav-link fs-5 fw-bold"
             >캡틴 능력치</RouterLink
           >
-          <RouterLink
-            :to="{ name: 'Items' }"
-            class="flex-sm-fill text-sm-center nav-link fs-5 fw-bold active"
+          <RouterLink :to="{ name: 'Items' }" class="flex-sm-fill text-sm-center nav-link fs-5 fw-bold active"
             >캡틴 대상 선수</RouterLink
           >
         </nav>
@@ -19,36 +15,59 @@
       <div>
         <h1 class="font-bold text-transparent tracking-tight max-w-2xl text-7xl">
           <span class="inline-block bg-clip-text bg-gradient-to-r from-green-600 to-blue-600"
-            >MLB 더 쇼 24<br />`{{ name }}` 총 {{ total }} 선수</span
+            >MLB 더 쇼 24<br />`{{ title }}` 총 {{ total }} 선수</span
           >
         </h1>
       </div>
 
       <div class="d-grid gap-2 d-md-block py-5">
-        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-          <template v-for="(position, index) in positions" :key="position">
-            <input
-              @click="inquiryItems('I', `${position}`)"
-              type="radio"
-              class="btn-check"
-              name="btnradio"
-              :id="`btnradio${index}`"
-              autocomplete="off"
-            />
-            <label
-              :class="`btn btn-outline-${index > 7 ? 'danger' : 'primary'}`"
-              :for="`btnradio${index}`"
-              >{{ position }}</label
-            >
-          </template>
+        <div class="row">
+          <div class="col">
+            <div class="btn-group" role="group" aria-label="Postion">
+              <template v-for="(position, index) in positions" :key="position">
+                <input
+                  @click="inquiryItems('I')"
+                  type="radio"
+                  class="btn-check btn-check-position"
+                  name="btnposition"
+                  :id="`btnposition${index}`"
+                  :value="position"
+                  autocomplete="off"
+                />
+                <label :class="`btn btn-outline-${index > 7 ? 'danger' : 'primary'}`" :for="`btnposition${index}`">{{
+                  position
+                }}</label>
+              </template>
+            </div>
+          </div>
+          <div class="col">
+            <div class="btn-group" role="group" aria-label="Set">
+              <template v-for="(set, index) in sets" :key="set">
+                <input
+                  @click="inquiryItems('I')"
+                  type="radio"
+                  class="btn-check btn-check-set"
+                  name="btnset"
+                  :id="`btnset${index}`"
+                  :value="set"
+                  autocomplete="off"
+                />
+                <label :class="`btn btn-outline-dark`" :for="`btnset${index}`">{{ set }}</label>
+              </template>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="d-grid gap-2 d-md-block p-5 bg-success rounded-3 text-white">
-        <p class="fs-3">{{ boosts[2].description }}</p>
-        <template v-for="attribute in attributes" :key="attribute.name">
-          <span class="fs-4 fw-bold pe-3">{{ attribute.name }}</span>
-          <span class="fs-4 pe-5">{{ attribute.value }}💨</span>
+      <div class="d-grid gap-2 d-md-block pt-3 ps-3 pe-3 bg-success rounded-3 text-white">
+        <template v-for="tier in tiers" :key="tier.tier">
+          <p class="fs-5">{{ tier.description }}</p>
+          <div class="pb-3">
+            <template v-for="attribute in tier.attributes" :key="attribute.name">
+              <span class="fs-5 fw-bold pe-3">{{ attribute.name }}</span>
+              <span class="fs-5 pe-5">{{ attribute.value }}💨</span>
+            </template>
+          </div>
         </template>
       </div>
 
@@ -56,12 +75,7 @@
         <template v-for="(item, index) in items" :key="item.$.uuid">
           <div class="row py-3" style="border-bottom: 1px solid #000000">
             <div class="col-2">
-              <img
-                :src="item.$.baked_img"
-                class="rounded d-block"
-                :alt="item.$.name"
-                style="width: 150px"
-              />
+              <img :src="item.$.baked_img" class="rounded d-block" :alt="item.$.name" style="width: 150px" />
               <div class="fs-3">#{{ index + 1 }}</div>
               <div class="fs-3">Set {{ item.$.set_name }}</div>
             </div>
@@ -78,81 +92,49 @@
                   <!-- STR: 일반 정보 -->
                   <div class="row mb-1">
                     <div class="col">
-                      <div
-                        class="btn-group-vertical btn-group-sm me-1"
-                        role="group"
-                        aria-label="Small button group"
-                      >
+                      <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                         <button type="button" class="btn btn-secondary fs-8">Overall</button>
                         <button type="button" class="btn btn-outline-dark fs-8">
                           {{ item.$.ovr }}
                         </button>
                       </div>
-                      <div
-                        class="btn-group-vertical btn-group-sm me-1"
-                        role="group"
-                        aria-label="Small button group"
-                      >
+                      <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                         <button type="button" class="btn btn-secondary fs-8">Bats</button>
                         <button type="button" class="btn btn-outline-dark fs-8">
                           {{ item.$.bat_hand }}
                         </button>
                       </div>
-                      <div
-                        class="btn-group-vertical btn-group-sm me-1"
-                        role="group"
-                        aria-label="Small button group"
-                      >
+                      <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                         <button type="button" class="btn btn-secondary fs-8">Throws</button>
                         <button type="button" class="btn btn-outline-dark fs-8">
                           {{ item.$.throw_hand }}
                         </button>
                       </div>
-                      <div
-                        class="btn-group-vertical btn-group-sm me-1"
-                        role="group"
-                        aria-label="Small button group"
-                      >
+                      <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                         <button type="button" class="btn btn-secondary fs-8">Secondary</button>
                         <button type="button" class="btn btn-outline-dark fs-8">
                           {{ item.$.display_secondary_positions }}&nbsp;
                         </button>
                       </div>
-                      <div
-                        class="btn-group-vertical btn-group-sm me-1"
-                        role="group"
-                        aria-label="Small button group"
-                      >
+                      <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                         <button type="button" class="btn btn-secondary fs-8">Weight</button>
                         <button type="button" class="btn btn-outline-dark fs-8">
                           {{ item.$.weight }}
                         </button>
                       </div>
-                      <div
-                        class="btn-group-vertical btn-group-sm me-1"
-                        role="group"
-                        aria-label="Small button group"
-                      >
+                      <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                         <button type="button" class="btn btn-secondary fs-8">Height</button>
                         <button type="button" class="btn btn-outline-dark fs-8">
                           {{ item.$.height }}
                         </button>
                       </div>
-                      <div
-                        class="btn-group-vertical btn-group-sm me-1"
-                        role="group"
-                        aria-label="Small button group"
-                      >
+                      <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                         <button type="button" class="btn btn-secondary fs-8">Age</button>
                         <button type="button" class="btn btn-outline-dark fs-8">
                           {{ item.$.age }}
                         </button>
                       </div>
-                      <div
-                        class="btn-group-vertical btn-group-sm me-1"
-                        role="group"
-                        aria-label="Small button group"
-                      >
+                      <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                         <button type="button" class="btn btn-secondary fs-8">Born</button>
                         <button type="button" class="btn btn-outline-dark fs-8">
                           {{ item.$.born }}
@@ -165,61 +147,37 @@
                     <!-- STR: 타격 정보 -->
                     <div class="row mb-1">
                       <div class="col">
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-primary fs-8">CON R</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('Contact vs R', item.$.contact_right) }}
                           </button>
                         </div>
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-primary fs-8">CON L</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('Contact vs L', item.$.contact_left) }}
                           </button>
                         </div>
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-primary fs-8">POW R</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('Power vs R', item.$.power_right) }}
                           </button>
                         </div>
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-primary fs-8">POW L</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('Power vs L', item.$.power_left) }}
                           </button>
                         </div>
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-primary fs-8">VIS</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('Plate Vision', item.$.plate_vision) }}
                           </button>
                         </div>
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-primary fs-8">CLT</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('Batting Clutch', item.$.batting_clutch) }}
@@ -233,91 +191,55 @@
                     <!-- STR: 투구 정보 -->
                     <div class="row mb-1">
                       <div class="col">
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-danger fs-8">STA</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('Stamina', item.$.stamina) }}
                           </button>
                         </div>
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-danger fs-8">H/9</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('Hits Per 9', item.$.hits_per_bf) }}
                           </button>
                         </div>
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-danger fs-8">K/9</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('K Per 9', item.$.k_per_bf) }}
                           </button>
                         </div>
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-danger fs-8">BB/9</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('BB Per 9', item.$.bb_per_bf) }}
                           </button>
                         </div>
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-danger fs-8">HR/9</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('HR Per 9', item.$.hr_per_bf) }}
                           </button>
                         </div>
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-danger fs-8">PCLT</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('Pitching Clutch', item.$.pitching_clutch) }}
                           </button>
                         </div>
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-danger fs-8">CTRL</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('Pitching Control', item.$.pitch_control) }}
                           </button>
                         </div>
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-danger fs-8">VEL</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('Pitching Velocity', item.$.pitch_velocity) }}
                           </button>
                         </div>
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-danger fs-8">BRK</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('Pitching Movement', item.$.pitch_movement) }}
@@ -331,41 +253,25 @@
                     <!-- STR: 필드 정보 -->
                     <div class="row mb-1">
                       <div class="col">
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-success fs-8">FLD</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('Fielding Ability', item.$.fielding_ability) }}
                           </button>
                         </div>
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-success fs-8">ARM</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('Arm Strength', item.$.arm_strength) }}
                           </button>
                         </div>
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-success fs-8">ACC</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('Arm Accuracy', item.$.arm_accuracy) }}
                           </button>
                         </div>
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-success fs-8">REAC</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('Reaction Time', item.$.reaction_time) }}
@@ -379,31 +285,19 @@
                     <!-- STR: 주루 정보 -->
                     <div class="row mb-1">
                       <div class="col">
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-warning fs-8">SPD</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('Speed', item.$.speed) }}
                           </button>
                         </div>
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-warning fs-8">STEAL</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('Baserunning Ability', item.$.baserunning_ability) }}
                           </button>
                         </div>
-                        <div
-                          class="btn-group-vertical btn-group-sm me-1"
-                          role="group"
-                          aria-label="Small button group"
-                        >
+                        <div class="btn-group-vertical btn-group-sm me-1" role="group" aria-label="Small button group">
                           <button type="button" class="btn btn-warning fs-8">BR AGG</button>
                           <button type="button" class="btn btn-outline-dark fs-8">
                             {{ calcBoost('Baserunning Aggression', item.$.baserunning_aggression) }}
@@ -516,9 +410,7 @@
 
       <template v-if="more">
         <div class="d-grid py-5">
-          <button @click="inquiryItems('M')" type="button" class="btn btn-primary btn-lg">
-            더보기
-          </button>
+          <button @click="inquiryItems('M')" type="button" class="btn btn-primary btn-lg">더보기</button>
         </div>
       </template>
     </div>
@@ -531,7 +423,7 @@ import { onMounted, reactive, ref } from 'vue'
 //검색 파라미터
 let { searchParams } = history.state
 let uuid = searchParams ? searchParams.uuid : '239a08b036996af21be91c28f8b985cb'
-let name = searchParams ? searchParams.name : 'Rafael Devers'
+let title = ref(searchParams ? searchParams.name : 'Rafael Devers')
 let boosts = searchParams
   ? JSON.parse(searchParams.boosts)
   : [
@@ -540,16 +432,16 @@ let boosts = searchParams
         description: '5 Hitters with under 75 Fielding on your squad',
         attributes: [
           { name: 'Power vs R', value: '5' },
-          { name: 'Power vs L', value: '5' }
-        ]
+          { name: 'Power vs L', value: '5' },
+        ],
       },
       {
         tier: '2',
         description: '8 Hitters with under 75 Fielding on your squad',
         attributes: [
           { name: 'Power vs R', value: '10' },
-          { name: 'Power vs L', value: '10' }
-        ]
+          { name: 'Power vs L', value: '10' },
+        ],
       },
       {
         tier: '3',
@@ -558,13 +450,15 @@ let boosts = searchParams
           { name: 'Power vs R', value: '15' },
           { name: 'Power vs L', value: '15' },
           { name: 'Plate Vision', value: '5' },
-          { name: 'Batting Clutch', value: '5' }
-        ]
-      }
+          { name: 'Batting Clutch', value: '5' },
+        ],
+      },
     ]
+let team = searchParams ? searchParams.team : 'Red Sox'
+let ability = searchParams ? searchParams.ability_name : 'Cornerstone'
 
-//능력치(3티어)
-const attributes = boosts[2].attributes
+//티어
+let tiers = boosts.filter((element) => element.tier === '3')
 
 //페이지
 let page = 0
@@ -578,6 +472,9 @@ let more = ref(false)
 //포지션 필터
 const positions = ['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'SP', 'RP', 'CP']
 
+//셋 필터
+const sets = ['CORE', '1', '2']
+
 //아이템
 const items = reactive([])
 
@@ -586,21 +483,56 @@ const calcBoost = (type, value) => {
   let result = value
   let boost
 
-  attributes.forEach((element) => {
-    if (element.name === type) {
-      boost = Number(value) + Number(element.value)
-      boost = boost > 125 ? 125 : boost
-      result = `${value}⇢${boost}`
-    }
+  //계층별
+  tiers.forEach((element) => {
+    //능력치별
+    element.attributes.forEach((attribute) => {
+      if (attribute.name === type) {
+        boost = Number(value) + Number(attribute.value)
+        boost = boost > 125 ? 125 : boost
+        result = `${value}⇢${boost}`
+      }
+    })
   })
 
   return result
 }
 
 /**
+ * 팀 캡틴 정보 조회
+ */
+const inquiryTeamCaptains = async () => {
+  //파라미터
+  const params = {
+    ability: ability,
+  }
+
+  //API 호출
+  const res = await fetch(`/api/db/team/captains`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(params),
+  })
+  //응답
+  const result = await res.json()
+
+  //타이틀
+  title.value = result[0].$.team
+
+  //티어 초기화
+  tiers.splice(0)
+
+  result.forEach((element) => {
+    tiers.push(element.$.boosts[2])
+  })
+}
+
+/**
  * 아이템 목록 조회
  */
-const inquiryItems = async (mode, position) => {
+const inquiryItems = async (mode) => {
   //페이지 증가
   if (mode === 'I') {
     items.splice(0)
@@ -609,8 +541,29 @@ const inquiryItems = async (mode, position) => {
     page = page + 1
   }
 
+  //선택한 포지션
+  let position = document.querySelectorAll('input[name="btnposition"]:checked')
+  position = position.length ? position[0].value : ''
+  //선택한 세트
+  let set = document.querySelectorAll('input[name="btnset"]:checked')
+  set = set.length ? set[0].value : ''
+
+  //파라미터
+  const params = {
+    page: page,
+    position: position,
+    set: set,
+    team: ability.includes('Team Captain') ? team : '',
+  }
+
   //API 호출
-  const res = await fetch(`/api/db/items/${uuid}?page=${page}&pos=${position}`)
+  const res = await fetch(`/api/db/items/${uuid}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(params),
+  })
   //응답
   const result = await res.json()
 
@@ -629,6 +582,9 @@ const inquiryItems = async (mode, position) => {
  * 컴포넌트 마운트
  */
 onMounted(async () => {
+  if (ability.includes('Team Captain')) {
+    inquiryTeamCaptains()
+  }
   inquiryItems('I')
 })
 </script>

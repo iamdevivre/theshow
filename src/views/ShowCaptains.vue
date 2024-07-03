@@ -3,14 +3,10 @@
     <div class="container">
       <header class="pb-5">
         <nav class="nav nav-pills flex-column flex-sm-row">
-          <RouterLink
-            :to="{ name: 'Captains' }"
-            class="flex-sm-fill text-sm-center nav-link fs-5 fw-bold active"
+          <RouterLink :to="{ name: 'Captains' }" class="flex-sm-fill text-sm-center nav-link fs-5 fw-bold active"
             >캡틴</RouterLink
           >
-          <RouterLink
-            :to="{ name: 'Items' }"
-            class="flex-sm-fill text-sm-center nav-link fs-5 fw-bold"
+          <RouterLink :to="{ name: 'Items' }" class="flex-sm-fill text-sm-center nav-link fs-5 fw-bold"
             >캡틴 대상 선수</RouterLink
           >
         </nav>
@@ -29,27 +25,22 @@
             <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
               <template v-for="(ability, index) in abilities" :key="ability">
                 <input
-                  @click="inquiryCaptains('I', `${ability}`)"
+                  @click="inquiryCaptains('I')"
                   type="radio"
                   class="btn-check"
                   name="ability"
                   :id="`ability${index}`"
+                  :value="ability"
                   autocomplete="off"
                   :checked="index === 0 ? true : false"
                 />
-                <label class="btn btn-outline-primary" :for="`ability${index}`">{{
-                  ability
-                }}</label>
+                <label class="btn btn-outline-primary" :for="`ability${index}`">{{ ability }}</label>
               </template>
             </div>
           </div>
 
           <div class="col-md-auto">
-            <select
-              @change="inquiryTeams($event)"
-              class="form-select"
-              aria-label="Default select example"
-            >
+            <select @change="inquiryCaptains('I')" class="form-select" aria-label="Default select example">
               <option value="">--- 아메리칸 리그🥨동부지구 ---</option>
               <option value="Orioles">Orioles</option>
               <option value="Red Sox">Red Sox</option>
@@ -121,9 +112,11 @@
                       searchParams: {
                         uuid: captain.$.uuid,
                         name: captain.$.name,
-                        boosts: JSON.stringify(captain.$.boosts)
-                      }
-                    }
+                        boosts: JSON.stringify(captain.$.boosts),
+                        team: captain.$.team,
+                        ability_name: captain.$.ability_name,
+                      },
+                    },
                   }"
                   >{{ captain.$.name }}</RouterLink
                 >
@@ -152,9 +145,7 @@
 
       <template v-if="more">
         <div class="d-grid py-5">
-          <button @click="inquiryCaptains('M')" type="button" class="btn btn-primary btn-lg">
-            더보기
-          </button>
+          <button @click="inquiryCaptains('M')" type="button" class="btn btn-primary btn-lg">더보기</button>
         </div>
       </template>
     </div>
@@ -182,9 +173,6 @@ const captains = reactive([])
 //능력 필터
 const abilities = ref(['Cornerstone', 'Team Captain', 'Other'])
 
-//선택된 능력 필터
-let selectedAbilities = 'Cornerstone'
-
 /**
  * 팀 조건 조회
  */
@@ -199,7 +187,7 @@ const inquiryTeams = (event) => {
 /**
  * 캡틴 목록 조회
  */
-const inquiryCaptains = async (mode, ability, team) => {
+const inquiryCaptains = async (mode) => {
   //페이지 증가
   if (mode === 'I') {
     captains.splice(0)
@@ -208,18 +196,32 @@ const inquiryCaptains = async (mode, ability, team) => {
     page = page + 1
   }
 
-  //능력치 조건
-  if (mode === 'I') {
-    if (ability) {
-      selectedAbilities = ability
-    }
-  }
+  //선택한 포지션
+  let ability = document.querySelectorAll('input[name="ability"]:checked')
+  ability = ability.length ? ability[0].value : ''
+  //선택한 팀
+  let team = document.querySelectorAll('select[class="form-select"] > option:checked')
+  team = team.length ? team[0].value : ''
 
   //타이틀
   title.value = ability ? ability : '전체'
 
+  //파라미터
+  const params = {
+    page: page,
+    ability: ability ? ability : 'Cornerstone',
+    team: team,
+  }
+
   //API 호출
-  const res = await fetch(`/api/db/captains?page=${page}&ability=${selectedAbilities}&team=${team}`)
+  //?page=${page}&ability=${selectedAbilities}&team=${team}
+  const res = await fetch(`/api/db/captains`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(params),
+  })
   //응답
   const result = await res.json()
 

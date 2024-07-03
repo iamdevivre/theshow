@@ -16,7 +16,7 @@ const pool = mariadb.createPool({
   password: 'show',
   host: 'localhost',
   database: 'theshowdb',
-  connectionLimit: 5
+  connectionLimit: 5,
 })
 
 /**
@@ -104,16 +104,17 @@ const insertItems = async (data) => {
 /**
  * DB: 캡틴 조회
  */
-app.get('/api/db/captains', async (req, res) => {
+app.post('/api/db/captains', async (req, res) => {
   let conn
   let rows
   let where
 
-  let result = { total: 0, captains: [] }
+  let data = req.body
+  const page = data.page
+  const ability = data.ability
+  const team = data.team
 
-  const page = req.query.page
-  const ability = req.query.ability
-  const team = req.query.team
+  let result = { total: 0, captains: [] }
 
   try {
     conn = await pool.getConnection()
@@ -136,7 +137,7 @@ app.get('/api/db/captains', async (req, res) => {
     }
 
     //팀
-    if (team != 'undefined') {
+    if (team) {
       where =
         where +
         `
@@ -146,7 +147,7 @@ app.get('/api/db/captains', async (req, res) => {
 
     rows = await conn.query({
       sql: `SELECT count(*) as num FROM captains WHERE 1=1 ${where}`,
-      bigIntAsNumber: true
+      bigIntAsNumber: true,
     })
 
     result.total = rows[0].num
@@ -168,17 +169,44 @@ app.get('/api/db/captains', async (req, res) => {
 })
 
 /**
+ * DB: 팀 캡틴 조회
+ */
+app.post('/api/db/team/captains', async (req, res) => {
+  let conn
+  let rows
+
+  let data = req.body
+
+  try {
+    conn = await pool.getConnection()
+
+    rows = await conn.query(`
+      SELECT JSON_QUERY(DATA, '$') AS "$"
+      FROM captains
+      WHERE 1=1
+        AND JSON_VALUE(DATA, '$.ability_name') = '${data.ability}'`)
+  } finally {
+    if (conn) conn.release() //release to pool
+  }
+
+  res.send(rows)
+})
+
+/**
  * DB: 아이템 조회
  */
-app.get('/api/db/items/:uuid', async (req, res) => {
+app.post('/api/db/items/:uuid', async (req, res) => {
   let conn
   let rows
   let where
 
-  let result = { total: 0, items: [] }
+  let data = req.body
+  const page = data.page
+  const position = data.position
+  const set = data.set
+  const team = data.team
 
-  const page = req.query.page
-  const pos = req.query.pos
+  let result = { total: 0, items: [] }
 
   try {
     conn = await pool.getConnection()
@@ -189,32 +217,27 @@ app.get('/api/db/items/:uuid', async (req, res) => {
       //Rafael Devers
       where = `
         AND JSON_VALUE(DATA, '$.fielding_ability') <= 74
-        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE
-        AND JSON_VALUE(DATA, '$.set_name') = '2'`
+        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE`
     } else if (uuid === '99cc0385e7170c6ee7a2cf202d3bbe42') {
       //Nolan Arenado
       where = `
         AND JSON_VALUE(DATA, '$.speed') < 45
-        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE
-        AND JSON_VALUE(DATA, '$.set_name') = '2'`
+        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE`
     } else if (uuid === '93fe5dc2e734e7754d0c7799bc091c7d') {
       //Byron Buxton
       where = `
         AND JSON_VALUE(DATA, '$.plate_vision') < 60
-        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE
-        AND JSON_VALUE(DATA, '$.set_name') = '2'`
+        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE`
     } else if (uuid === '153cdc73ee95d7e2da41340d552d1370') {
       //Giancarlo Stanton
       where = `
         AND JSON_VALUE(DATA, '$.series_year') BETWEEN 2010 AND 2019
-        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE
-        AND JSON_VALUE(DATA, '$.set_name') = '2'`
+        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE`
     } else if (uuid === '8ef723b96a42952c7a4769a9231b79b3') {
       //Corbin Carroll
       where = `
         AND JSON_VALUE(DATA, '$.speed') > 84
-        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE
-        AND JSON_VALUE(DATA, '$.set_name') = '2'`
+        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE`
     } else if (uuid === '5f6abd385d99e9f508320ab4cca07f28') {
       //Luis Castillo
       where = `
@@ -223,8 +246,7 @@ app.get('/api/db/items/:uuid', async (req, res) => {
       //Kodai Senga
       where = `
         AND JSON_VALUE(DATA, '$.bb_per_bf') < 65
-        AND JSON_VALUE(DATA, '$.is_hitter') = FALSE
-        AND JSON_VALUE(DATA, '$.set_name') = '2'`
+        AND JSON_VALUE(DATA, '$.is_hitter') = FALSE`
     } else if (uuid === 'e88a994b60847fd3f5bf29ddce531b13') {
       //Greg Maddux
       where = `
@@ -237,31 +259,43 @@ app.get('/api/db/items/:uuid', async (req, res) => {
       //David Ortiz
       where = `
         AND JSON_VALUE(DATA, '$.series_year') BETWEEN 2000 AND 2009
-        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE
-        AND JSON_VALUE(DATA, '$.set_name') = '2'`
-    } else if (
-      uuid === '23aa022e22662426f9a3c97187ef0649' ||
-      uuid === 'bc224f0b34a3a0f7c0b9042fc31eae18'
-    ) {
-      //Frank Thomas, Sean Manaea
+        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE`
+    } else if (uuid === 'cdec5b1983e3acf95ea01fde0e07c9b3') {
+      //Carlos Santana
       where = `
-        AND JSON_VALUE(DATA, '$.team_short_name') = 'OAK'`
+        AND JSON_VALUE(DATA, '$.bat_hand') = 'S'`
+    } else if (uuid === 'a7d8310e9508041f82180fa60e32c143') {
+      //Trevor Hoffman
+      where = ``
+    } else if (team) {
+      //Team Captain
+      where = `
+        AND JSON_VALUE(DATA, '$.team') = '${team}'`
     } else {
       where = ``
     }
 
     //포지션
-    if (pos != 'undefined') {
+    if (position != '') {
       where =
         where +
         `
-        AND JSON_VALUE(DATA, '$.display_position') = '${pos}'
+        AND JSON_VALUE(DATA, '$.display_position') = '${position}'
+      `
+    }
+
+    //세트
+    if (set != '') {
+      where =
+        where +
+        `
+        AND JSON_VALUE(DATA, '$.set_name') = '${set}'
       `
     }
 
     rows = await conn.query({
       sql: `SELECT count(*) as num FROM items WHERE 1=1 ${where}`,
-      bigIntAsNumber: true
+      bigIntAsNumber: true,
     })
 
     result.total = rows[0].num

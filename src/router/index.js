@@ -4,36 +4,41 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/',
+      name: 'index',
+      redirect: { name: 'Captains' },
+    },
+    {
       path: '/captains',
       name: 'Captains',
-      component: () => import('@/views/ShowCaptains.vue')
+      component: () => import('@/views/ShowCaptains.vue'),
     },
     {
       path: '/items',
       name: 'Items',
-      component: () => import('@/views/ShowItems.vue')
+      component: () => import('@/views/ShowItems.vue'),
     },
     {
       path: '/apis/captains',
       name: 'ApisCaptains',
-      component: () => import('@/views/apis/ApisCaptains.vue')
+      component: () => import('@/views/apis/ApisCaptains.vue'),
     },
     {
       path: '/apis/listings',
       name: 'ApisListings',
-      component: () => import('@/views/apis/ApisListings.vue')
+      component: () => import('@/views/apis/ApisListings.vue'),
     },
     {
       path: '/db/captains',
       name: 'DbCaptains',
-      component: () => import('@/views/db/DbCaptains.vue')
+      component: () => import('@/views/db/DbCaptains.vue'),
     },
     {
       path: '/db/listings',
       name: 'DbListings',
-      component: () => import('@/views/db/DbListings.vue')
-    }
-  ]
+      component: () => import('@/views/db/DbListings.vue'),
+    },
+  ],
 })
 
 export default router

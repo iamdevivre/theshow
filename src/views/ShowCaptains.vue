@@ -1,16 +1,8 @@
 <template>
   <div class="py-5">
     <div class="container">
-      <header class="pb-5">
-        <nav class="nav nav-pills flex-column flex-sm-row">
-          <RouterLink :to="{ name: 'Captains' }" class="flex-sm-fill text-sm-center nav-link fs-5 fw-bold active"
-            >캡틴</RouterLink
-          >
-          <RouterLink :to="{ name: 'Items' }" class="flex-sm-fill text-sm-center nav-link fs-5 fw-bold"
-            >캡틴 대상 선수</RouterLink
-          >
-        </nav>
-      </header>
+      <MenuHeader />
+
       <div>
         <h1 class="font-bold text-transparent tracking-tight max-w-2xl text-7xl">
           <span class="inline-block bg-clip-text bg-gradient-to-r from-green-600 to-blue-600"
@@ -154,6 +146,7 @@
 
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
+import MenuHeader from '@/components/MenuHeader.vue'
 
 //페이지
 let page = 0
@@ -214,7 +207,6 @@ const inquiryCaptains = async (mode) => {
   }
 
   //API 호출
-  //?page=${page}&ability=${selectedAbilities}&team=${team}
   const res = await fetch(`/api/db/captains`, {
     method: 'POST',
     headers: {

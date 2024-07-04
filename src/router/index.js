@@ -18,25 +18,11 @@ const router = createRouter({
       name: 'Items',
       component: () => import('@/views/ShowItems.vue'),
     },
+    ,
     {
-      path: '/apis/captains',
-      name: 'ApisCaptains',
-      component: () => import('@/views/apis/ApisCaptains.vue'),
-    },
-    {
-      path: '/apis/listings',
-      name: 'ApisListings',
-      component: () => import('@/views/apis/ApisListings.vue'),
-    },
-    {
-      path: '/db/captains',
-      name: 'DbCaptains',
-      component: () => import('@/views/db/DbCaptains.vue'),
-    },
-    {
-      path: '/db/listings',
-      name: 'DbListings',
-      component: () => import('@/views/db/DbListings.vue'),
+      path: '/Apis',
+      name: 'Apis',
+      component: () => import('@/views/ShowApis.vue'),
     },
   ],
 })

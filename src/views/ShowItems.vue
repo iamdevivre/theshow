@@ -1,16 +1,7 @@
 <template>
   <div class="py-5">
     <div class="container">
-      <header class="pb-5">
-        <nav class="nav nav-pills flex-column flex-sm-row">
-          <RouterLink :to="{ name: 'Captains' }" class="flex-sm-fill text-sm-center nav-link fs-5 fw-bold"
-            >캡틴 능력치</RouterLink
-          >
-          <RouterLink :to="{ name: 'Items' }" class="flex-sm-fill text-sm-center nav-link fs-5 fw-bold active"
-            >캡틴 대상 선수</RouterLink
-          >
-        </nav>
-      </header>
+      <MenuHeader />
 
       <div>
         <h1 class="font-bold text-transparent tracking-tight max-w-2xl text-7xl">
@@ -78,6 +69,7 @@
               <img :src="item.$.baked_img" class="rounded d-block" :alt="item.$.name" style="width: 150px" />
               <div class="fs-3">#{{ index + 1 }}</div>
               <div class="fs-3">Set {{ item.$.set_name }}</div>
+              <div class="fs-3">{{ item.$.series }}</div>
             </div>
             <div class="col fs-5 fw-bold">
               <!-- STR: 선수 이름 -->
@@ -419,6 +411,7 @@
 
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
+import MenuHeader from '@/components/MenuHeader.vue'
 
 //검색 파라미터
 let { searchParams } = history.state

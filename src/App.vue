@@ -25,6 +25,17 @@ body {
   font-size: 14px;
 }
 
+/* 네비게이션 */
+.router-link-active {
+  color: var(--bs-nav-pills-link-active-color);
+  background-color: var(--bs-nav-pills-link-active-bg);
+}
+
+.router-link-active:hover {
+  color: var(--bs-nav-pills-link-active-color);
+}
+
+/* 테이블 */
 table {
   width: 100%;
   border-collapse: collapse;

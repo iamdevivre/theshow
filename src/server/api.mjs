@@ -56,29 +56,6 @@ const insertCaptions = async (data) => {
 }
 
 /**
- * 리스팅 데이터 입력
- */
-const insertListings = async (data) => {
-  let conn
-
-  try {
-    conn = await pool.getConnection()
-
-    data.forEach(async (element) => {
-      //값 배열
-      const values = []
-
-      values.push(element.item.uuid)
-      values.push(JSON.stringify(element))
-
-      await conn.query('INSERT INTO Listings value (?, ?)', values)
-    })
-  } finally {
-    if (conn) conn.release() //release to pool
-  }
-}
-
-/**
  * 아이템 데이터 입력
  */
 const insertItems = async (data) => {
@@ -264,9 +241,26 @@ app.post('/api/db/items/:uuid', async (req, res) => {
       //Carlos Santana
       where = `
         AND JSON_VALUE(DATA, '$.bat_hand') = 'S'`
-    } else if (uuid === 'a7d8310e9508041f82180fa60e32c143') {
-      //Trevor Hoffman
-      where = ``
+    } else if (uuid === 'ec9b2c4699c82367a388b3d5dda3dd82') {
+      //Elias Díaz
+      where = `
+        AND JSON_VALUE(DATA, '$.series') IN ('All-Star', 'All-Star Game', 'Home Run Derby')`
+    } else if (uuid === 'e362695a8a652bf7ba58af7bcb2559cf') {
+      //Max Muncy
+      where = `
+        AND JSON_VALUE(DATA, '$.series') IN ('Season Awards', 'Topps Now')`
+    } else if (uuid === '663733c750ec092c7b6ee5fcf018868a') {
+      //Mark Prior
+      where = `
+        AND JSON_VALUE(DATA, '$.series') IN ('Standout')`
+    } else if (uuid === '8d1917f3c1c61008c42302948c2bbd60') {
+      //Rube Foster
+      where = `
+        AND JSON_VALUE(DATA, '$.series') IN ('The Negro Leagues')`
+    } else if (uuid === '6af208a28000cae06e5b71947691a66d') {
+      //Derek Jeter
+      where = `
+        AND JSON_VALUE(DATA, '$.series') IN ('Captain')`
     } else if (team) {
       //Team Captain
       where = `
@@ -322,106 +316,153 @@ app.post('/api/db/items/:uuid', async (req, res) => {
 })
 
 /**
- * DB: 리스팅 조회
+ * API: 캡틴 데이터 초기화
  */
-app.get('/api/db/listings', async (req, res) => {
+app.delete('/api/captains', async (req, res) => {
+  let params = req.body
+  let data = { success: false }
   let conn
-  let rows
+
+  if (
+    params.token !==
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+  ) {
+    data.success = false
+    res.send(data)
+
+    return
+  }
 
   try {
     conn = await pool.getConnection()
 
-    rows = await conn.query(`
-      SELECT
-        uuid,
-        JSON_VALUE(DATA, '$.item.baked_img') AS img,
-        JSON_VALUE(DATA, '$.listing_name') AS "name",
-        JSON_VALUE(DATA, '$.item.ovr') AS ovr,
-        JSON_VALUE(DATA, '$.best_buy_price') AS buy,
-        JSON_VALUE(DATA, '$.best_sell_price') AS sell,
-        JSON_VALUE(DATA, '$.item.display_position') AS "position",
-        JSON_VALUE(DATA, '$.item.team') AS team,
-        JSON_VALUE(DATA, '$.item.set_name') AS "set",
-	      JSON_VALUE(DATA, '$.item.series') AS "series"
-      FROM
-        listings`)
+    let result = await conn.query('TRUNCATE TABLE captains')
+
+    data.success = true
   } finally {
     if (conn) conn.release() //release to pool
   }
 
-  res.send(rows)
+  res.send(data)
+})
+
+/**
+ * API: 캡틴 조회
+ */
+app.get('/api/captains', async (req, res) => {
+  let params = req.body
+  let result = { totalPages: 0, success: false }
+
+  const page = params.page
+
+  try {
+    const url = `https://mlb24.theshow.com/apis/captains.json?page=${page}`
+    const data = await call(url)
+
+    result.success = true
+    result.totalPages = data.total_pages
+  } catch (err) {
+    console.error(err)
+  }
+
+  res.send(result)
 })
 
 /**
  * API: 캡틴 입력
  */
-app.get('/api/captains', async (req, res) => {
-  let data = null
+app.post('/api/captains', async (req, res) => {
+  let params = req.body
+  let result = { totalPages: 0, success: false }
+
+  const page = params.page
 
   try {
-    for (let i = 1; i <= 4; i++) {
-      const url = `https://mlb24.theshow.com/apis/captains.json?page=${i}`
-      data = await call(url)
-      await insertCaptions(data.captains)
-    }
+    const url = `https://mlb24.theshow.com/apis/captains.json?page=${page}`
+    const data = await call(url)
+    await insertCaptions(data.captains)
+
+    result.success = true
+    result.totalPages = data.total_pages
   } catch (err) {
     console.error(err)
+  }
+
+  res.send(result)
+})
+
+/**
+ * API: 아이템 데이터 초기화
+ */
+app.delete('/api/items', async (req, res) => {
+  let params = req.body
+  let data = { success: false }
+  let conn
+
+  if (
+    params.token !==
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+  ) {
+    data.success = false
+    res.send(data)
+
+    return
+  }
+
+  try {
+    conn = await pool.getConnection()
+
+    let result = await conn.query('TRUNCATE TABLE items')
+
+    data.success = true
+  } finally {
+    if (conn) conn.release() //release to pool
   }
 
   res.send(data)
 })
 
 /**
- * API: 리스팅 입력
+ * API: 아이템 조회
  */
-app.get('/api/listings', async (req, res) => {
-  let data = null
+app.get('/api/items', async (req, res) => {
+  let params = req.body
+  let result = { totalPages: 0, success: false }
+
+  const page = params.page
 
   try {
-    for (let i = 1; i <= 92; i++) {
-      const url = `https://mlb24.theshow.com/apis/listings.json?type=mlb_card&page=${i}`
-      data = await call(url)
-      await insertListings(data.listings)
-    }
+    const url = `https://mlb24.theshow.com/apis/items.json?page=${page}`
+    const data = await call(url)
+
+    result.success = true
+    result.totalPages = data.total_pages
   } catch (err) {
     console.error(err)
   }
 
-  res.send(data)
+  res.send(result)
 })
 
 /**
  * API: 아이템 입력
  */
-app.get('/api/items', async (req, res) => {
-  let data = null
+app.post('/api/items', async (req, res) => {
+  let params = req.body
+  let result = { totalPages: 0, success: false }
+
+  const page = params.page
 
   try {
-    for (let i = 1; i <= 109; i++) {
-      const url = `https://mlb24.theshow.com/apis/items.json?type=mlb_card&page=${i}`
-      data = await call(url)
-      await insertItems(data.items)
-    }
+    const url = `https://mlb24.theshow.com/apis/items.json?page=${page}`
+    const data = await call(url)
+    await insertItems(data.items)
+
+    result.success = true
+    result.totalPages = data.total_pages
   } catch (err) {
     console.error(err)
   }
 
-  res.send(data)
-})
-
-/**
- * API: 게임 이력 조회
- */
-app.get('/api/history', async (req, res) => {
-  let data = null
-  let page = req.query.page
-
-  try {
-    const url = `https://mlb24.theshow.com/apis/game_history.json?username=ProgFreeXer&platform=xbl&mode=arena&page=${page}`
-    data = await call(url)
-  } catch (err) {
-    console.error(err)
-  }
-
-  res.send(data)
+  res.send(result)
 })

@@ -274,7 +274,9 @@ app.post('/api/db/items/:uuid', async (req, res) => {
       where =
         where +
         `
-        AND JSON_VALUE(DATA, '$.display_position') = '${position}'
+        AND (JSON_VALUE(DATA, '$.display_position') = '${position}'
+            OR
+            FIND_IN_SET('${position}', JSON_VALUE(DATA, '$.display_secondary_positions')) > 0)
       `
     }
 
@@ -304,7 +306,7 @@ app.post('/api/db/items/:uuid', async (req, res) => {
       FROM items
       WHERE 1=1
         ${where}
-      ORDER BY JSON_VALUE(DATA, '$.display_position'), JSON_VALUE(DATA, '$.ovr') DESC
+      ORDER BY JSON_VALUE(DATA, '$.ovr') DESC, JSON_VALUE(DATA, '$.display_position'), JSON_VALUE(DATA, '$.display_secondary_positions')
       LIMIT ${(page - 1) * 25}, 25`)
 
     result.items.push(...rows)

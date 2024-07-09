@@ -3,7 +3,7 @@
     <div class="container">
       <MenuHeader />
 
-      <div>
+      <div class="py-5">
         <h1 class="font-bold text-transparent tracking-tight max-w-2xl text-7xl">
           <span class="inline-block bg-clip-text bg-gradient-to-r from-green-600 to-blue-600"
             >MLB 더 쇼 24<br />`{{ title }}` 캡틴 총 {{ total }} 선수</span

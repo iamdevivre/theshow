@@ -18,6 +18,11 @@ const router = createRouter({
       name: 'Items',
       component: () => import('@/views/ShowItems.vue'),
     },
+    {
+      path: '/supercharge',
+      name: 'Supercharge',
+      component: () => import('@/views/ShowSupercharge.vue'),
+    },
     ,
     {
       path: '/Apis',

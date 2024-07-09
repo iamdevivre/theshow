@@ -6,60 +6,9 @@
       <div class="py-5">
         <h1 class="font-bold text-transparent tracking-tight max-w-2xl text-7xl">
           <span class="inline-block bg-clip-text bg-gradient-to-r from-green-600 to-blue-600"
-            >MLB 더 쇼 24<br />`{{ title }}` 총 {{ total }} 선수</span
+            >MLB 더 쇼 24<br />과급 선수 총 {{ total }} 선수</span
           >
         </h1>
-      </div>
-
-      <div class="d-grid gap-2 d-md-block py-5">
-        <div class="row">
-          <div class="col">
-            <div class="btn-group" role="group" aria-label="Postion">
-              <template v-for="(position, index) in positions" :key="position">
-                <input
-                  @click="inquiryItems('I')"
-                  type="radio"
-                  class="btn-check btn-check-position"
-                  name="btnposition"
-                  :id="`btnposition${index}`"
-                  :value="position"
-                  autocomplete="off"
-                />
-                <label :class="`btn btn-outline-${index > 7 ? 'danger' : 'primary'}`" :for="`btnposition${index}`">{{
-                  position
-                }}</label>
-              </template>
-            </div>
-          </div>
-          <div class="col">
-            <div class="btn-group" role="group" aria-label="Set">
-              <template v-for="(set, index) in sets" :key="set">
-                <input
-                  @click="inquiryItems('I')"
-                  type="radio"
-                  class="btn-check btn-check-set"
-                  name="btnset"
-                  :id="`btnset${index}`"
-                  :value="set"
-                  autocomplete="off"
-                />
-                <label :class="`btn btn-outline-dark`" :for="`btnset${index}`">{{ set }}</label>
-              </template>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="d-grid gap-2 d-md-block pt-3 ps-3 pe-3 bg-success rounded-3 text-white">
-        <template v-for="tier in tiers" :key="tier.tier">
-          <p class="fs-5">{{ tier.description }}</p>
-          <div class="pb-3">
-            <template v-for="attribute in tier.attributes" :key="attribute.name">
-              <span class="fs-5 fw-bold pe-3">{{ attribute.name }}</span>
-              <span class="fs-5 pe-5">{{ attribute.value }}💨</span>
-            </template>
-          </div>
-        </template>
       </div>
 
       <div class="d-grid gap-2 d-md-block py-5">
@@ -74,8 +23,8 @@
             <div class="col fs-5 fw-bold">
               <!-- STR: 선수 이름 -->
               <div class="mb-2">
-                {{ item.$.jersey_number }} {{ item.$.display_position }}
-                {{ item.$.name }}
+                {{ item.$.jersey_number }} {{ item.$.display_position }} {{ item.$.name }}
+                <a :href="`https://mlb24.theshow.com/items/${item.$.uuid}`" class="ps-3" target="blank">🚀</a>
               </div>
               <!-- END: 선수 이름 -->
 
@@ -381,7 +330,7 @@
                 </template>
               </div>
 
-              <div class="row pt-2">
+              <div class="row py-2">
                 <template v-for="quirk in item.$.quirks" :key="quirk.name">
                   <div class="col-4">
                     <img
@@ -395,16 +344,22 @@
                   </div>
                 </template>
               </div>
+
+              <div class="row pt-2">
+                <div class="col">
+                  <img
+                    src="https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCRGZLRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--d29b22371818894f00b3913c1c5a5e2781786b66/supercharged_icon.webp"
+                    class="rounded float-start me-3 mb-1"
+                    style="width: 40px"
+                  />
+                  <div class="fs-8">{{ moment(item.$.augment_end_date).format('YYYY.MM.DD hh:mm:ss') }}</div>
+                  <div class="text-muted fs-8">{{ item.$.augment_text }}</div>
+                </div>
+              </div>
             </div>
           </div>
         </template>
       </div>
-
-      <template v-if="more">
-        <div class="d-grid py-5">
-          <button @click="inquiryItems('M')" type="button" class="btn btn-primary btn-lg">더보기</button>
-        </div>
-      </template>
     </div>
   </div>
 </template>
@@ -412,61 +367,10 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import MenuHeader from '@/components/MenuHeader.vue'
-
-//검색 파라미터
-let { searchParams } = history.state
-let uuid = searchParams ? searchParams.uuid : '239a08b036996af21be91c28f8b985cb'
-let title = ref(searchParams ? searchParams.name : 'Rafael Devers')
-let boosts = searchParams
-  ? JSON.parse(searchParams.boosts)
-  : [
-      {
-        tier: '1',
-        description: '5 Hitters with under 75 Fielding on your squad',
-        attributes: [
-          { name: 'Power vs R', value: '5' },
-          { name: 'Power vs L', value: '5' },
-        ],
-      },
-      {
-        tier: '2',
-        description: '8 Hitters with under 75 Fielding on your squad',
-        attributes: [
-          { name: 'Power vs R', value: '10' },
-          { name: 'Power vs L', value: '10' },
-        ],
-      },
-      {
-        tier: '3',
-        description: '11 Hitters with under 75 Fielding on your squad',
-        attributes: [
-          { name: 'Power vs R', value: '15' },
-          { name: 'Power vs L', value: '15' },
-          { name: 'Plate Vision', value: '5' },
-          { name: 'Batting Clutch', value: '5' },
-        ],
-      },
-    ]
-let team = searchParams ? searchParams.team : 'Red Sox'
-let ability = searchParams ? searchParams.ability_name : 'Cornerstone'
-
-//티어
-let tiers = boosts.filter((element) => element.tier === '3')
-
-//페이지
-let page = 0
+import moment from 'moment'
 
 //총 건수
 let total = ref(0)
-
-//더보기
-let more = ref(false)
-
-//포지션 필터
-const positions = ['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'SP', 'RP', 'CP']
-
-//셋 필터
-const sets = ['CORE', '1', '2']
 
 //아이템
 const items = reactive([])
@@ -474,110 +378,35 @@ const items = reactive([])
 //캡틴 별 부스트 적용 값
 const calcBoost = (type, value) => {
   let result = value
-  let boost
-
-  //계층별
-  tiers.forEach((element) => {
-    //능력치별
-    element.attributes.forEach((attribute) => {
-      if (attribute.name === type) {
-        boost = Number(value) + Number(attribute.value)
-        boost = boost > 125 ? 125 : boost
-        result = `${value}⇢${boost}`
-      }
-    })
-  })
 
   return result
 }
 
 /**
- * 팀 캡틴 정보 조회
+ * 과급 선수 정보 조회
  */
-const inquiryTeamCaptains = async () => {
-  //파라미터
-  const params = {
-    ability: ability,
-  }
-
+const inquirySupercharge = async () => {
   //API 호출
-  const res = await fetch(`/api/db/team/captains`, {
+  const res = await fetch(`/api/db/supercharge`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(params),
-  })
-  //응답
-  const result = await res.json()
-
-  //타이틀
-  title.value = result[0].$.team
-
-  //티어 초기화
-  tiers.splice(0)
-
-  result.forEach((element) => {
-    tiers.push(element.$.boosts[2])
-  })
-}
-
-/**
- * 아이템 목록 조회
- */
-const inquiryItems = async (mode) => {
-  //페이지 증가
-  if (mode === 'I') {
-    items.splice(0)
-    page = 1
-  } else {
-    page = page + 1
-  }
-
-  //선택한 포지션
-  let position = document.querySelectorAll('input[name="btnposition"]:checked')
-  position = position.length ? position[0].value : ''
-  //선택한 세트
-  let set = document.querySelectorAll('input[name="btnset"]:checked')
-  set = set.length ? set[0].value : ''
-
-  //파라미터
-  const params = {
-    page: page,
-    position: position,
-    set: set,
-    team: ability.includes('Team Captain') ? team : '',
-  }
-
-  //API 호출
-  const res = await fetch(`/api/db/items/${uuid}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(params),
   })
   //응답
   const result = await res.json()
 
   //총 건수
-  total.value = result.total
+  total.value = result.length
 
   //목록
-  items.push(...result.items)
-
-  //더보기
-  if (total.value > page * 25) more.value = true
-  else more.value = false
+  items.push(...result)
 }
 
 /**
  * 컴포넌트 마운트
  */
 onMounted(async () => {
-  if (ability.includes('Team Captain')) {
-    inquiryTeamCaptains()
-  }
-  inquiryItems('I')
+  inquirySupercharge()
 })
 </script>

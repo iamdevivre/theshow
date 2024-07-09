@@ -2,7 +2,8 @@
   <div class="py-5">
     <div class="container">
       <MenuHeader />
-      <div>
+
+      <div class="py-5">
         <h1 class="font-bold text-transparent tracking-tight max-w-2xl text-7xl">
           <span class="inline-block bg-clip-text bg-gradient-to-r from-green-600 to-blue-600"
             >MLB 더 쇼 24<br />데이터 현행화</span

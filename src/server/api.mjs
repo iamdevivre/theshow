@@ -161,7 +161,8 @@ app.post('/api/db/team/captains', async (req, res) => {
       SELECT JSON_QUERY(DATA, '$') AS "$"
       FROM captains
       WHERE 1=1
-        AND JSON_VALUE(DATA, '$.ability_name') = '${data.ability}'`)
+        AND JSON_VALUE(DATA, '$.ability_name') = '${data.ability}'
+      ORDER BY JSON_VALUE(DATA, '$.ovr') DESC, JSON_VALUE(DATA, '$.display_position')`)
   } finally {
     if (conn) conn.release() //release to pool
   }
@@ -315,6 +316,31 @@ app.post('/api/db/items/:uuid', async (req, res) => {
   }
 
   res.send(result)
+})
+
+/**
+ * DB: 과급 선수 조회
+ */
+app.post('/api/db/supercharge', async (req, res) => {
+  let conn
+  let rows
+
+  let data = req.body
+
+  try {
+    conn = await pool.getConnection()
+
+    rows = await conn.query(`
+      SELECT JSON_QUERY(DATA, '$') AS "$"
+      FROM items
+      WHERE 1=1
+        AND JSON_VALUE(DATA, '$.has_augment') = TRUE
+      ORDER BY JSON_VALUE(DATA, '$.ovr') DESC, JSON_VALUE(DATA, '$.display_position')`)
+  } finally {
+    if (conn) conn.release() //release to pool
+  }
+
+  res.send(rows)
 })
 
 /**

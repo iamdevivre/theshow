@@ -79,6 +79,29 @@ const insertItems = async (data) => {
 }
 
 /**
+ * 리스팅 데이터 입력
+ */
+const insertListings = async (data) => {
+  let conn
+
+  try {
+    conn = await pool.getConnection()
+
+    data.forEach(async (element) => {
+      //값 배열
+      const values = []
+
+      values.push(element.item.uuid)
+      values.push(JSON.stringify(element))
+
+      await conn.query('INSERT INTO Listings value (?, ?)', values)
+    })
+  } finally {
+    if (conn) conn.release() //release to pool
+  }
+}
+
+/**
  * DB: 캡틴 조회
  */
 app.post('/api/db/captains', async (req, res) => {
@@ -194,78 +217,78 @@ app.post('/api/db/items/:uuid', async (req, res) => {
     if (uuid === '239a08b036996af21be91c28f8b985cb') {
       //Rafael Devers
       where = `
-        AND JSON_VALUE(DATA, '$.fielding_ability') <= 74
-        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE`
+        AND JSON_VALUE(A.DATA, '$.fielding_ability') <= 74
+        AND JSON_VALUE(A.DATA, '$.is_hitter') = TRUE`
     } else if (uuid === '99cc0385e7170c6ee7a2cf202d3bbe42') {
       //Nolan Arenado
       where = `
-        AND JSON_VALUE(DATA, '$.speed') < 45
-        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE`
+        AND JSON_VALUE(A.DATA, '$.speed') < 45
+        AND JSON_VALUE(A.DATA, '$.is_hitter') = TRUE`
     } else if (uuid === '93fe5dc2e734e7754d0c7799bc091c7d') {
       //Byron Buxton
       where = `
-        AND JSON_VALUE(DATA, '$.plate_vision') < 60
-        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE`
+        AND JSON_VALUE(A.DATA, '$.plate_vision') < 60
+        AND JSON_VALUE(A.DATA, '$.is_hitter') = TRUE`
     } else if (uuid === '153cdc73ee95d7e2da41340d552d1370') {
       //Giancarlo Stanton
       where = `
-        AND JSON_VALUE(DATA, '$.series_year') BETWEEN 2010 AND 2019
-        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE`
+        AND JSON_VALUE(A.DATA, '$.series_year') BETWEEN 2010 AND 2019
+        AND JSON_VALUE(A.DATA, '$.is_hitter') = TRUE`
     } else if (uuid === '8ef723b96a42952c7a4769a9231b79b3') {
       //Corbin Carroll
       where = `
-        AND JSON_VALUE(DATA, '$.speed') > 84
-        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE`
+        AND JSON_VALUE(A.DATA, '$.speed') > 84
+        AND JSON_VALUE(A.DATA, '$.is_hitter') = TRUE`
     } else if (uuid === '5f6abd385d99e9f508320ab4cca07f28') {
       //Luis Castillo
       where = `
-        AND JSON_VALUE(DATA, '$.series') = 'Live'`
+        AND JSON_VALUE(A.DATA, '$.series') = 'Live'`
     } else if (uuid === 'a03aad508e99fc341087a8b9ec12c053') {
       //Kodai Senga
       where = `
-        AND JSON_VALUE(DATA, '$.bb_per_bf') < 65
-        AND JSON_VALUE(DATA, '$.is_hitter') = FALSE`
+        AND JSON_VALUE(A.DATA, '$.bb_per_bf') < 65
+        AND JSON_VALUE(A.DATA, '$.is_hitter') = FALSE`
     } else if (uuid === 'e88a994b60847fd3f5bf29ddce531b13') {
       //Greg Maddux
       where = `
         AND (
-              (JSON_VALUE(DATA, '$.is_hitter') = 1 AND JSON_VALUE(DATA, '$.power_right') < 70)
+              (JSON_VALUE(A.DATA, '$.is_hitter') = 1 AND JSON_VALUE(A.DATA, '$.power_right') < 70)
               OR
-              (JSON_VALUE(DATA, '$.is_hitter') = 0 AND JSON_VALUE(DATA, '$.k_per_bf') < 75)
+              (JSON_VALUE(A.DATA, '$.is_hitter') = 0 AND JSON_VALUE(A.DATA, '$.k_per_bf') < 75)
             )`
     } else if (uuid === 'f91e35ca467d4be2e5b72fb20f9e2ca4') {
       //David Ortiz
       where = `
-        AND JSON_VALUE(DATA, '$.series_year') BETWEEN 2000 AND 2009
-        AND JSON_VALUE(DATA, '$.is_hitter') = TRUE`
+        AND JSON_VALUE(A.DATA, '$.series_year') BETWEEN 2000 AND 2009
+        AND JSON_VALUE(A.DATA, '$.is_hitter') = TRUE`
     } else if (uuid === 'cdec5b1983e3acf95ea01fde0e07c9b3') {
       //Carlos Santana
       where = `
-        AND JSON_VALUE(DATA, '$.bat_hand') = 'S'`
+        AND JSON_VALUE(A.DATA, '$.bat_hand') = 'S'`
     } else if (uuid === 'ec9b2c4699c82367a388b3d5dda3dd82') {
       //Elias Díaz
       where = `
-        AND JSON_VALUE(DATA, '$.series') IN ('All-Star', 'All-Star Game', 'Home Run Derby')`
+        AND JSON_VALUE(A.DATA, '$.series') IN ('All-Star', 'All-Star Game', 'Home Run Derby')`
     } else if (uuid === 'e362695a8a652bf7ba58af7bcb2559cf') {
       //Max Muncy
       where = `
-        AND JSON_VALUE(DATA, '$.series') IN ('Season Awards', 'Topps Now')`
+        AND JSON_VALUE(A.DATA, '$.series') IN ('Season Awards', 'Topps Now')`
     } else if (uuid === '663733c750ec092c7b6ee5fcf018868a') {
       //Mark Prior
       where = `
-        AND JSON_VALUE(DATA, '$.series') IN ('Standout')`
+        AND JSON_VALUE(A.DATA, '$.series') IN ('Standout')`
     } else if (uuid === '8d1917f3c1c61008c42302948c2bbd60') {
       //Rube Foster
       where = `
-        AND JSON_VALUE(DATA, '$.series') IN ('The Negro Leagues')`
+        AND JSON_VALUE(A.DATA, '$.series') IN ('The Negro Leagues')`
     } else if (uuid === '6af208a28000cae06e5b71947691a66d') {
       //Derek Jeter
       where = `
-        AND JSON_VALUE(DATA, '$.series') IN ('Captain')`
+        AND JSON_VALUE(A.DATA, '$.series') IN ('Captain')`
     } else if (team) {
       //Team Captain
       where = `
-        AND JSON_VALUE(DATA, '$.team') = '${team}'`
+        AND JSON_VALUE(A.DATA, '$.team') = '${team}'`
     } else {
       where = ``
     }
@@ -275,9 +298,9 @@ app.post('/api/db/items/:uuid', async (req, res) => {
       where =
         where +
         `
-        AND (JSON_VALUE(DATA, '$.display_position') = '${position}'
+        AND (JSON_VALUE(A.DATA, '$.display_position') = '${position}'
             OR
-            FIND_IN_SET('${position}', JSON_VALUE(DATA, '$.display_secondary_positions')) > 0)
+            FIND_IN_SET('${position}', JSON_VALUE(A.DATA, '$.display_secondary_positions')) > 0)
       `
     }
 
@@ -286,12 +309,12 @@ app.post('/api/db/items/:uuid', async (req, res) => {
       where =
         where +
         `
-        AND JSON_VALUE(DATA, '$.set_name') = '${set}'
+        AND JSON_VALUE(A.DATA, '$.set_name') = '${set}'
       `
     }
 
     rows = await conn.query({
-      sql: `SELECT count(*) as num FROM items WHERE 1=1 ${where}`,
+      sql: `SELECT count(*) as num FROM items A LEFT OUTER JOIN listings B ON A.uuid = B.uuid WHERE 1=1 ${where}`,
       bigIntAsNumber: true,
     })
 
@@ -299,15 +322,19 @@ app.post('/api/db/items/:uuid', async (req, res) => {
 
     rows = await conn.query(`
       SELECT CASE
-              WHEN JSON_VALUE(DATA, '$.is_hitter') THEN FALSE
-              WHEN JSON_VALUE(DATA, '$.display_secondary_positions') != '' THEN TRUE
+              WHEN JSON_VALUE(A.DATA, '$.is_hitter') THEN FALSE
+              WHEN JSON_VALUE(A.DATA, '$.display_secondary_positions') != '' THEN TRUE
               ELSE FALSE
             END AS "two_way",
-            JSON_QUERY(DATA, '$') AS "$"
-      FROM items
+            JSON_VALUE(A.DATA, '$.uuid') AS "uuid",
+            JSON_QUERY(A.DATA, '$') AS "$",
+            JSON_QUERY(B.DATA, '$') AS "market"
+      FROM items A
+      LEFT OUTER JOIN listings B
+      ON A.uuid = B.uuid
       WHERE 1=1
         ${where}
-      ORDER BY JSON_VALUE(DATA, '$.ovr') DESC, JSON_VALUE(DATA, '$.display_position'), JSON_VALUE(DATA, '$.display_secondary_positions')
+      ORDER BY JSON_VALUE(A.DATA, '$.ovr') DESC, JSON_VALUE(A.DATA, '$.display_position'), JSON_VALUE(A.DATA, '$.display_secondary_positions')
       LIMIT ${(page - 1) * 25}, 25`)
 
     result.items.push(...rows)
@@ -324,8 +351,6 @@ app.post('/api/db/items/:uuid', async (req, res) => {
 app.post('/api/db/supercharge', async (req, res) => {
   let conn
   let rows
-
-  let data = req.body
 
   try {
     conn = await pool.getConnection()
@@ -485,6 +510,82 @@ app.post('/api/items', async (req, res) => {
     const url = `https://mlb24.theshow.com/apis/items.json?page=${page}`
     const data = await call(url)
     await insertItems(data.items)
+
+    result.success = true
+    result.totalPages = data.total_pages
+  } catch (err) {
+    console.error(err)
+  }
+
+  res.send(result)
+})
+
+/**
+ * API: 리스팅 데이터 초기화
+ */
+app.delete('/api/listings', async (req, res) => {
+  let params = req.body
+  let data = { success: false }
+  let conn
+
+  if (
+    params.token !==
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+  ) {
+    data.success = false
+    res.send(data)
+
+    return
+  }
+
+  try {
+    conn = await pool.getConnection()
+
+    let result = await conn.query('TRUNCATE TABLE listings')
+
+    data.success = true
+  } finally {
+    if (conn) conn.release() //release to pool
+  }
+
+  res.send(data)
+})
+
+/**
+ * API: 리스팅 조회
+ */
+app.get('/api/listings', async (req, res) => {
+  let params = req.body
+  let result = { totalPages: 0, success: false }
+
+  const page = params.page
+
+  try {
+    const url = `https://mlb24.theshow.com/apis/listings.json?page=${page}`
+    const data = await call(url)
+
+    result.success = true
+    result.totalPages = data.total_pages
+  } catch (err) {
+    console.error(err)
+  }
+
+  res.send(result)
+})
+
+/**
+ * API: 리스팅 입력
+ */
+app.post('/api/listings', async (req, res) => {
+  let params = req.body
+  let result = { totalPages: 0, success: false }
+
+  const page = params.page
+
+  try {
+    const url = `https://mlb24.theshow.com/apis/listings.json?page=${page}`
+    const data = await call(url)
+    await insertListings(data.listings)
 
     result.success = true
     result.totalPages = data.total_pages

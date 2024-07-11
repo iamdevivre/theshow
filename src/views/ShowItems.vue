@@ -63,21 +63,26 @@
       </div>
 
       <div class="d-grid gap-2 d-md-block py-5">
-        <template v-for="(item, index) in items" :key="item.$.uuid">
+        <template v-for="(item, index) in items" :key="item.uuid">
           <div class="row py-3" style="border-bottom: 1px solid #000000">
             <div class="col-2">
               <img :src="item.$.baked_img" class="rounded d-block" :alt="item.$.name" style="width: 150px" />
-              <div class="fs-3">#{{ index + 1 }}</div>
               <div class="fs-3">Set {{ item.$.set_name }}</div>
               <div class="fs-3">{{ item.$.series }}</div>
+              <template v-if="item.$.is_sellable">
+                <!-- STR: 마켓 정보 -->
+                <div class="fs-3">매도 {{ item.market?.best_sell_price.toLocaleString() }}</div>
+                <div class="fs-3">매수 {{ item.market?.best_buy_price.toLocaleString() }}</div>
+                <!-- END: 마켓 정보 -->
+              </template>
             </div>
             <div class="col fs-5 fw-bold">
-              <!-- STR: 선수 이름 -->
+              <!-- STR: 선수 기존 정보 -->
               <div class="mb-2">
-                {{ item.$.jersey_number }} {{ item.$.display_position }}
-                {{ item.$.name }}
+                #{{ item.$.jersey_number }} {{ item.$.display_position }} {{ item.$.name }}
+                <a :href="`https://mlb24.theshow.com/items/${item.$.uuid}`" class="ps-3" target="blank">🚀</a>
               </div>
-              <!-- END: 선수 이름 -->
+              <!-- END: 선수 기본 정보 -->
 
               <div class="row mb-3">
                 <div class="col">
@@ -381,7 +386,8 @@
                 </template>
               </div>
 
-              <div class="row pt-2">
+              <!-- STR: 쿼크 정보 -->
+              <div class="row" :class="`item.$.is_sellable ? 'py-2' : 'pt-2'`">
                 <template v-for="quirk in item.$.quirks" :key="quirk.name">
                   <div class="col-4">
                     <img
@@ -395,6 +401,7 @@
                   </div>
                 </template>
               </div>
+              <!-- END: 쿼크 정보 -->
             </div>
           </div>
         </template>
@@ -405,6 +412,8 @@
           <button @click="inquiryItems('M')" type="button" class="btn btn-primary btn-lg">더보기</button>
         </div>
       </template>
+
+      <!--Bar :data="data" :options="options" /-->
     </div>
   </div>
 </template>
@@ -412,6 +421,19 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import MenuHeader from '@/components/MenuHeader.vue'
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import { Bar } from 'vue-chartjs'
+
+//차트 객체 등록
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+
+const data = {
+  labels: ['January', 'February', 'March'],
+  datasets: [{ label: 'Data One', backgroundColor: '#f87979', data: [40, 20, 12] }],
+}
+const options = {
+  responsive: true,
+}
 
 //검색 파라미터
 let { searchParams } = history.state
@@ -549,8 +571,8 @@ const inquiryItems = async (mode) => {
     team: ability.includes('Team Captain') ? team : '',
   }
 
-  //API 호출
-  const res = await fetch(`/api/db/items/${uuid}`, {
+  //API 호출: 아이템
+  let res = await fetch(`/api/db/items/${uuid}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -558,12 +580,12 @@ const inquiryItems = async (mode) => {
     body: JSON.stringify(params),
   })
   //응답
-  const result = await res.json()
+  let result = await res.json()
 
   //총 건수
   total.value = result.total
 
-  //목록
+  //아이템 목록
   items.push(...result.items)
 
   //더보기

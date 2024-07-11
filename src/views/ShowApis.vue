@@ -36,6 +36,7 @@
             <button @click="insertCaptains" type="button" class="btn btn-success btn-lg">적재</button>
           </div>
         </div>
+
         <div class="row fs-2 pt-5">
           <div class="col fw-bold">아이템</div>
         </div>
@@ -60,6 +61,31 @@
             <button @click="insertItems" type="button" class="btn btn-success btn-lg">적재</button>
           </div>
         </div>
+
+        <div class="row fs-2 pt-5">
+          <div class="col fw-bold">리스팅</div>
+        </div>
+        <div class="row fs-2 py-4">
+          <div class="col-9">
+            <div class="progress">
+              <div
+                class="progress-bar bg-info fs-3"
+                role="progressbar"
+                aria-label="Listings"
+                :style="`width: ${listingsProgress}%`"
+                :aria-valuenow="listingsProgress"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                {{ listingsProgress }}%
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <button @click="deleteListings" type="button" class="btn btn-danger btn-lg me-2">초기화</button>
+            <button @click="insertListings" type="button" class="btn btn-success btn-lg">적재</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -74,6 +100,9 @@ let captainsProgress = ref(100)
 
 //아이템 변수
 let itemsProgress = ref(100)
+
+//리스팅 변수
+let listingsProgress = ref(100)
 
 /**
  * 캡틴 데이터 초기화
@@ -223,6 +252,82 @@ const insertItems = async () => {
     if (result.success) {
       //프로그레스 표시
       itemsProgress.value = ((i / totalPages) * 100).toFixed(2)
+    }
+  }
+}
+
+/**
+ * 리스팅 데이터 초기화
+ */
+const deleteListings = async () => {
+  //파라미터
+  const params = {
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+  }
+
+  //API 호출
+  const res = await fetch(`/api/listings`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(params),
+  })
+
+  //응답
+  const result = await res.json()
+
+  //성공
+  if (result.success) {
+    listingsProgress.value = 0
+  }
+}
+
+/**
+ * 리스팅 데이터 적재
+ */
+const insertListings = async () => {
+  //초기화
+  await deleteListings()
+
+  //파라미터
+  const params = {
+    page: 1,
+  }
+
+  //API 호출: 조회
+  let res = await fetch(`/api/listings`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  //응답: 조회
+  let result = await res.json()
+  const totalPages = Number(result.totalPages)
+
+  for (let i = 1; i <= totalPages; i++) {
+    //페이지
+    params.page = i
+
+    //API 호출: 입력
+    res = await fetch(`/api/listings`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(params),
+    })
+
+    //응답: 입력
+    result = await res.json()
+
+    //성공
+    if (result.success) {
+      //프로그레스 표시
+      listingsProgress.value = ((i / totalPages) * 100).toFixed(2)
     }
   }
 }

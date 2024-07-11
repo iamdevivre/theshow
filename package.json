@@ -14,6 +14,7 @@
     "@creative-tim-official/argon-dashboard-free": "^1.1.0",
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.3",
+    "chart.js": "^4.4.3",
     "dayjs": "^1.11.11",
     "express": "^4.19.2",
     "mariadb": "^3.3.1",
@@ -21,7 +22,9 @@
     "node-fetch": "^3.3.2",
     "pinia": "^2.1.7",
     "vue": "^3.4.29",
-    "vue-router": "^4.3.3"
+    "vue-chartjs": "^5.3.1",
+    "vue-router": "^4.3.3",
+    "vue3-charts": "^1.1.33"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",

@@ -422,7 +422,6 @@
 import { onMounted, reactive, ref } from 'vue'
 import MenuHeader from '@/components/MenuHeader.vue'
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
-import { Bar } from 'vue-chartjs'
 
 //차트 객체 등록
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
@@ -488,7 +487,7 @@ let more = ref(false)
 const positions = ['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'SP', 'RP', 'CP']
 
 //셋 필터
-const sets = ['CORE', '1', '2']
+const sets = ['CORE', '1', '2', '3']
 
 //아이템
 const items = reactive([])

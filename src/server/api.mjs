@@ -285,6 +285,24 @@ app.post('/api/db/items/:uuid', async (req, res) => {
       //Derek Jeter
       where = `
         AND JSON_VALUE(A.DATA, '$.series') IN ('Captain')`
+    } else if (uuid === '6fcc1ede3600391ae0070c857adc17d5') {
+      //Oneil Cruz
+      where = `
+        AND JSON_VALUE(A.DATA, '$.arm_strength') >= 90
+        AND JSON_VALUE(A.DATA, '$.is_hittr') = TRUE`
+    } else if (uuid === '460570bbaddf1f591078eecad76cf506') {
+      //Jackson Chourio
+      where = `
+        AND JSON_VALUE(A.DATA, '$.age') <= 23
+        AND JSON_VALUE(A.DATA, '$.is_hitter') = TRUE`
+    } else if (uuid === '340f03ad235dcd5ba097dcfc2a74d7a7') {
+      //Joe Nathan
+      where = `
+        AND JSON_VALUE(A.DATA, '$.born') = 'Texas'`
+    } else if (uuid === '4e7c74660fca105e4398ab0e17867537') {
+      //Tim Salmon
+      where = `
+        AND JSON_VALUE(A.DATA, '$.born') = 'California'`
     } else if (team) {
       //Team Captain
       where = `
